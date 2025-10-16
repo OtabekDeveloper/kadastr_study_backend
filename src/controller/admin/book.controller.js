@@ -69,7 +69,7 @@ module.exports = {
     try {
       const result = await BookModel.findById(req.params.id).populate([
         {
-          path: "province",
+          path: "bookcategory",
           select: ["title"],
         },
       ]);
