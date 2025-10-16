@@ -13,7 +13,7 @@ module.exports = {
         const token = await signAsync(
           {
             _id: null,
-            role: "superadmin",
+            role: "admin",
             firstName: "Admin",
             lastName: "Admin",
             middleName: "Admin",
