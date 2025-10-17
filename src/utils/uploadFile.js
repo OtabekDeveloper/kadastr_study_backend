@@ -89,22 +89,32 @@ exports.uploadFiles = (req, res, next) => {
 
     Object.keys(req.body).forEach((key) => {
       const match = key.match(/docs\[(\d+)\]\.path/);
-      if (match && typeof req.body[key] === "string") {
+      if (match) {
         const index = Number(match[1]);
         const titleKey = `docs[${index}].title`;
-        docs[index] = {
-          title: req.body[titleKey],
-          path: req.body[key],
-        };
+        const title = req.body[titleKey];
+        const pathValue = req.body[key];
+        if (!docs[index]) {
+          docs[index] = { title, path: pathValue };
+        }
       }
     });
 
     req.body.docs = docs.filter(Boolean);
 
     if (req.files?.some((f) => f.fieldname === "files")) {
-      req.body.files = req.files
+      const newFiles = req.files
         .filter((f) => f.fieldname === "files")
         .map((f) => `docs/${f.filename}`);
+
+      const existingFiles =
+        Array.isArray(req.body.files) && req.body.files.length > 0
+          ? req.body.files
+          : typeof req.body.files === "string"
+          ? [req.body.files]
+          : [];
+
+      req.body.files = [...existingFiles, ...newFiles];
     }
 
     next();
