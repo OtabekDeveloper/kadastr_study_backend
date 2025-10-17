@@ -13,7 +13,9 @@ module.exports = {
         video: req.body?.file,
       });
 
-      await SubjectModel.findByIdAndUpdate(req?.body?.subject, { $inc: { lessonCount: 1 } })
+      await SubjectModel.findByIdAndUpdate(req?.body?.subject, {
+        $inc: { lessonCount: 1 },
+      });
 
       const userSubjects = await UserSubject.find({ subject: req.body?.subject })
 
@@ -136,7 +138,9 @@ module.exports = {
       for (const filePath of doc.docs) {
         deleteFile(filePath.path);
       }
-      await SubjectModel.findByIdAndUpdate(doc?.subject, { $inc: { lessonCount: -1 } })
+      await SubjectModel.findByIdAndUpdate(doc?.subject, {
+        $inc: { lessonCount: -1 },
+      });
 
       const result = await LessonModel.findByIdAndDelete(req.params.id);
 

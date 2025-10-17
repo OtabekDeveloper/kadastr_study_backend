@@ -35,7 +35,6 @@ const allowedTypes = [
   "video/x-matroska",
 ];
 
-// 🎞️ Saqlash konfiguratsiyasi
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadDir),
   filename: (req, file, cb) => {
@@ -45,13 +44,11 @@ const storage = multer.diskStorage({
   },
 });
 
-// 🔒 Fayl filtr
 const fileFilter = (req, file, cb) => {
   if (allowedTypes.includes(file.mimetype)) cb(null, true);
   else cb(new Error("Ruxsat berilmagan fayl turi"), false);
 };
 
-// 📤 Universal upload (har qanday keyni ushlab oladi)
 const upload = multer({
   storage,
   fileFilter,
@@ -73,7 +70,7 @@ exports.uploadFiles = (req, res, next) => {
       req.body.file = `docs/${videoFile.filename}`;
     }
 
-    const docs = [];
+    let docs = [];
 
     req.files?.forEach((file) => {
       const match = file.fieldname.match(/docs\[(\d+)\]\.path/);
@@ -90,12 +87,34 @@ exports.uploadFiles = (req, res, next) => {
       }
     });
 
+    Object.keys(req.body).forEach((key) => {
+      const match = key.match(/docs\[(\d+)\]\.path/);
+      if (match) {
+        const index = Number(match[1]);
+        const titleKey = `docs[${index}].title`;
+        const title = req.body[titleKey];
+        const pathValue = req.body[key];
+        if (!docs[index]) {
+          docs[index] = { title, path: pathValue };
+        }
+      }
+    });
+
     req.body.docs = docs.filter(Boolean);
 
     if (req.files?.some((f) => f.fieldname === "files")) {
-      req.body.files = req.files
+      const newFiles = req.files
         .filter((f) => f.fieldname === "files")
         .map((f) => `docs/${f.filename}`);
+
+      const existingFiles =
+        Array.isArray(req.body.files) && req.body.files.length > 0
+          ? req.body.files
+          : typeof req.body.files === "string"
+          ? [req.body.files]
+          : [];
+
+      req.body.files = [...existingFiles, ...newFiles];
     }
 
     next();
