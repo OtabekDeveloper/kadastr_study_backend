@@ -35,7 +35,6 @@ const allowedTypes = [
   "video/x-matroska",
 ];
 
-// 🎞️ Saqlash konfiguratsiyasi
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadDir),
   filename: (req, file, cb) => {
@@ -45,13 +44,11 @@ const storage = multer.diskStorage({
   },
 });
 
-// 🔒 Fayl filtr
 const fileFilter = (req, file, cb) => {
   if (allowedTypes.includes(file.mimetype)) cb(null, true);
   else cb(new Error("Ruxsat berilmagan fayl turi"), false);
 };
 
-// 📤 Universal upload (har qanday keyni ushlab oladi)
 const upload = multer({
   storage,
   fileFilter,
@@ -73,7 +70,7 @@ exports.uploadFiles = (req, res, next) => {
       req.body.file = `docs/${videoFile.filename}`;
     }
 
-    const docs = [];
+    let docs = [];
 
     req.files?.forEach((file) => {
       const match = file.fieldname.match(/docs\[(\d+)\]\.path/);
@@ -86,6 +83,18 @@ exports.uploadFiles = (req, res, next) => {
         docs[index] = {
           title,
           path: `docs/${file.filename}`,
+        };
+      }
+    });
+
+    Object.keys(req.body).forEach((key) => {
+      const match = key.match(/docs\[(\d+)\]\.path/);
+      if (match && typeof req.body[key] === "string") {
+        const index = Number(match[1]);
+        const titleKey = `docs[${index}].title`;
+        docs[index] = {
+          title: req.body[titleKey],
+          path: req.body[key],
         };
       }
     });
