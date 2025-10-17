@@ -8,6 +8,8 @@ const NewsSchema = new mongoose.Schema(
     desc: { type: String, required: true },
     media: { type: [String], default: [] },
     active: { type: Boolean, default: false },
+    views: { type: Number, default: 0 },
+    date: { type: String },
   },
   { timestamps: true, versionKey: false }
 );

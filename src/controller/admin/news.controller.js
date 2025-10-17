@@ -1,10 +1,15 @@
 const NewsModel = require("../../models/news.model");
 const { deleteFile } = require("../../utils/deleteFile");
+const moment = require("moment");
 
 module.exports = {
   addNew: async (req, res) => {
     try {
-      const doc = new NewsModel({ ...req.body, media: req.body?.files });
+      const doc = new NewsModel({
+        ...req.body,
+        media: req.body?.files,
+        date: moment().format("YYYY-MM-DD"),
+      });
       const result = await doc.save();
       if (!result) {
         return res.status(400).json({ message: "Ma'lumot yaratishda xatolik" });
@@ -17,7 +22,7 @@ module.exports = {
 
   getAll: async function (req, res) {
     try {
-      const { search, province } = req.query;
+      const { search } = req.query;
       let data = {};
       const page = parseInt(req.query?.page);
       const limit = parseInt(req.query?.limit);
@@ -32,10 +37,6 @@ module.exports = {
         data["title"] = {
           $regex: new RegExp(search, "i"),
         };
-      }
-
-      if (province) {
-        data["province"] = province;
       }
 
       let docs;
