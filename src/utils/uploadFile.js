@@ -69,7 +69,11 @@ exports.uploadFiles = (req, res, next) => {
     if (videoFile) {
       req.body.file = `docs/${videoFile.filename}`;
     }
+    const photoField = req.files?.find((f) => f.fieldname === "cover");
 
+    if (photoField) {
+      req.body.cover = `docs/${photoField.filename}`;
+    }
     let docs = [];
 
     req.files?.forEach((file) => {

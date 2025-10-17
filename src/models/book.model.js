@@ -7,7 +7,8 @@ const BookSchema = new mongoose.Schema(
     title: { type: String, required: true },
     author: { type: String },
     desc: { type: String },
-    file: { type: String },
+    file: { type: String }, //  Kitobning PDF fayli
+    cover: { type: String }, //  Kitob muqova rasmi (jpg, png va h.k.)
     bookcategory: { type: mongoose.Schema.Types.ObjectId, ref: "bookcategory" },
   },
   { timestamps: true, versionKey: false }
