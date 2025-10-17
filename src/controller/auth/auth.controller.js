@@ -36,8 +36,6 @@ module.exports = {
 
   mobileLogin: async (req, res, next) => {
     try {
-      console.log(req.body);
-
       const { phone, password } = req.body;
 
       let user = await UserModel.findOne({
@@ -55,7 +53,6 @@ module.exports = {
             firstName: user?.firstName,
             lastName: user?.lastName,
             middleName: user?.middleName,
-            role: user?.role,
           },
           process.env.JWT_SECRET_KEY,
           {

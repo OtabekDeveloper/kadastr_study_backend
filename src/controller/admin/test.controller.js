@@ -89,7 +89,7 @@ module.exports = {
   //   },
   getAllTest: async (req, res) => {
     try {
-      const { question, subject, lesson } = req.query;
+      const { search, subject, lesson } = req.query;
       let data = {};
       const page = parseInt(req.query?.page);
       const limit = parseInt(req.query?.limit);
@@ -110,9 +110,9 @@ module.exports = {
         ],
       };
 
-      if (question) {
+      if (search) {
         data["question"] = {
-          $regex: new RegExp(question, "i"),
+          $regex: new RegExp(search, "i"),
         };
       }
 
