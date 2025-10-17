@@ -115,6 +115,32 @@ module.exports = {
     }
   },
 
+  getOneUserSubject: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const userSubject = await UserSubject.findById(id)
+        .populate({
+          path: "subject",
+          select: "title desc photo active isPublic",
+        })
+        .populate({
+          path: "user",
+          select: "firstName lastName photo group",
+          populate: {
+            path: "group",
+            select: "name startDate endDate",
+          },
+        });
+
+      if (!userSubject) {
+        return res.status(404).json({ message: "UserSubject not found" });
+      }
+
+      return res.status(200).json(userSubject);
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
+    }
+  },
   deleteUserFromSubject: async (req, res) => {
     try {
       const { id } = req.params;
