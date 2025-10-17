@@ -4,6 +4,7 @@ const LessonModel = require("../../models/lesson.model");
 const UserModel = require("../../models/user.model");
 const UserSubject = require("../../models/userSubject.model")
 const { deleteFile } = require("../../utils/deleteFile");
+const moment = require("moment")
 
 module.exports = {
   // Yo'nalish qo'shish
@@ -24,13 +25,19 @@ module.exports = {
         return res.status(400).json({ message: "Subjct not found" })
       }
 
+      const attachedSubject = await UserSubject.findOne({ subject, user })
+
+      if (attachedSubject) {
+        return res.status(400).json({ message: "Subject allready attached" })
+      }
+
       await UserSubject.create({
         subject,
         user,
         date: moment().format("YYYY-MM-DD"),
-        startDate: user?.group?.startDate,
-        endDate: user?.group?.endDate,
-        complateCount: { type: Number, default: 0 }, // default:0
+        startDate: userData?.group?.startDate,
+        endDate: userData?.group?.endDate,
+        complateCount: 0,
       })
 
       const lessons = await LessonModel.find({ subject })

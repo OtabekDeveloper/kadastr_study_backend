@@ -1,4 +1,5 @@
 const SubjectModel = require("../../models/subject.model");
+const AttachedModel = require("../../models/attechedSubject.model");
 const { deleteFile } = require("../../utils/deleteFile");
 
 module.exports = {
@@ -92,6 +93,12 @@ module.exports = {
 
       if (!doc) {
         return res.status(404).json({ message: "Ma'lumot topilmadi" });
+      }
+
+      const sub = await AttachedModel.findOne({ subject: doc?._id })
+
+      if (sub) {
+        return res.status(400).json({ message: "Action not allowed, subject attached to user" })
       }
 
       await deleteFile(doc.photo);
