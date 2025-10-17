@@ -32,23 +32,22 @@ const imageRes = path.join(__dirname, `../${UPLOAD_FOLDER_NAME}`);
 const allowedExtensions = process.env.ALLOWED_EXTENSIONS.split(",").map((ext) =>
   ext.trim()
 );
+
+app.use("/files", (req, res, next) => {
+  const ext = path.extname(req.path).toLowerCase();
+  if (!allowedExtensions.includes(ext)) {
+    return res.status(403).send("Forbidden: This file type is not allowed");
+  }
+  next();
+});
+
+// Static fayl serveri
 const expressStaticOptions = {
   dotfiles: "deny",
   index: false,
   fallthrough: false,
-  setHeaders: (res, filePath) => {
-    const ext = path.extname(filePath).toLowerCase();
-
-    if (!allowedExtensions.includes(ext)) {
-      res.status(404).send("Forbidden: This file type is not allowed");
-      return;
-    }
-  },
 };
 app.use("/files", express.static(imageRes, expressStaticOptions));
-app.get("/files/:folder/:format/:img", (req, res, next) => {
-  readFileDirect(req, res);
-});
 
 app.get("/*", (req, res) => {
   res.sendFile("index.html", { root });

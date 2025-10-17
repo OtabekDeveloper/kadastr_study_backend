@@ -1,4 +1,5 @@
 const LessonModel = require("../../models/lesson.model");
+const SubjectModel = require("../../models/subject.model");
 const { deleteFile } = require("../../utils/deleteFile");
 
 module.exports = {
@@ -9,6 +10,9 @@ module.exports = {
         docs: req.body?.docs,
         video: req.body?.file,
       });
+
+      await SubjectModel.findByIdAndUpdate(req?.body?.subject, { $inc: { lessonCount: 1 } })
+
       const result = await doc.save();
       if (!result) {
         return res.status(400).json({ message: "Ma'lumot yaratishda xatolik" });
@@ -27,7 +31,7 @@ module.exports = {
       const limit = parseInt(req.query?.limit);
 
       const options = {
-        sort: { createdAt: 1 },
+        sort: { createdAt: 1, step: 1 },
         page: page,
         limit: limit,
         populate: [
@@ -53,7 +57,7 @@ module.exports = {
         docs = await LessonModel.paginate(data, options);
       } else {
         docs = await LessonModel.find(data)
-          .sort({ createdAt: 1 })
+          .sort({ createdAt: 1, step: 1 })
           .populate([
             {
               path: "subject",
@@ -116,6 +120,7 @@ module.exports = {
       for (const filePath of doc.docs) {
         deleteFile(filePath.path);
       }
+      await SubjectModel.findByIdAndUpdate(doc?.subject, { $inc: { lessonCount: -1 } })
 
       const result = await LessonModel.findByIdAndDelete(req.params.id);
 

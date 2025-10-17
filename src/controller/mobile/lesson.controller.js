@@ -9,7 +9,7 @@ module.exports = {
       const limit = parseInt(req.query?.limit);
 
       const options = {
-        sort: { createdAt: 1 },
+        sort: { createdAt: 1, step: 1 },
         page: page,
         limit: limit,
         populate: [
@@ -35,7 +35,7 @@ module.exports = {
         docs = await LessonModel.paginate(data, options);
       } else {
         docs = await LessonModel.find(data)
-          .sort({ createdAt: 1 })
+          .sort({ createdAt: 1, step: 1 })
           .populate([
             {
               path: "subject",

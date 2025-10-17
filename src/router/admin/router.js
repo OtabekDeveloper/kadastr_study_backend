@@ -9,6 +9,7 @@ const UserRouter = require("./user.router");
 const SubjectRouter = require("./subject.router");
 const LessonRouter = require("./lesson.router");
 const TestRouter = require("./test.router");
+const AttechedRouter = require("./attechedSubject.router")
 
 router.use("/province", ProvinceRouter);
 router.use("/region", RegionRouter);
@@ -20,5 +21,6 @@ router.use("/user", UserRouter);
 router.use("/subject", SubjectRouter);
 router.use("/lesson", LessonRouter);
 router.use("/test", TestRouter);
+router.use("/atteched-subject", AttechedRouter)
 
 module.exports = router;

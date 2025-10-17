@@ -42,6 +42,18 @@ const models = {
     photo: String,
     active: Boolean, // aktivligi default : true
     isPublic: Boolean, //  default: false
+    lessonCount: Number // default:0
+
+  },
+
+  // UserSubject
+  userSubject: {
+    user: String, // ObjectId
+    subject: String, // ObjectId
+    date: String, // biriktirilgan sana
+    startDate: String, // YYYY-MM-DD
+    endDate: String, // YYYY-MM-DD
+    complateCount: Number // default:0
   },
 
   // darslar
