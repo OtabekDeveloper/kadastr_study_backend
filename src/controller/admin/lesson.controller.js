@@ -1,5 +1,7 @@
 const LessonModel = require("../../models/lesson.model");
 const SubjectModel = require("../../models/subject.model");
+const UserSubject = require("../../models/userSubject.model")
+const AttachedModel = require("../../models/attechedSubject.model");
 const { deleteFile } = require("../../utils/deleteFile");
 
 module.exports = {
@@ -12,6 +14,18 @@ module.exports = {
       });
 
       await SubjectModel.findByIdAndUpdate(req?.body?.subject, { $inc: { lessonCount: 1 } })
+
+      const userSubjects = await UserSubject.find({ subject: req.body?.subject })
+
+      for (let i = 0; i < userSubjects?.length; i++) {
+        await AttachedModel.create({
+          subject: doc?.subject,
+          lesson: doc?._id,
+          user: userSubjects[0]?.user,
+          isPassed: false,
+          lessonStep: doc?.step
+        })
+      }
 
       const result = await doc.save();
       if (!result) {
@@ -116,6 +130,8 @@ module.exports = {
       if (!doc) {
         return res.status(404).json({ message: "Ma'lumot topilmadi" });
       }
+
+      await AttachedModel.deleteMany({ lesson: doc?._id })
 
       for (const filePath of doc.docs) {
         deleteFile(filePath.path);
