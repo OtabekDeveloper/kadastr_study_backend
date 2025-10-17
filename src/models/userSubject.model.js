@@ -10,7 +10,7 @@ const UserSubjectSchema = new mongoose.Schema(
     startDate: { type: String, default: null },
     endDate: { type: String, default: null },
     complateCount: { type: Number, default: 0 }, // default:0
-
+    totalLesson: { type: Number, default: 0 }, // default:0
   },
   { timestamps: true, versionKey: false }
 );

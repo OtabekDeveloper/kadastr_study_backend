@@ -5,5 +5,9 @@ const { uploadFiles } = require("../../utils/uploadFile");
 
 router.use(authenticate);
 router.route("/").post(uploadFiles, AttechedSubjectController.addNew);
+router.route("/").get(uploadFiles, AttechedSubjectController.getAllUserSubject);
+router
+  .route("/:id")
+  .delete(uploadFiles, AttechedSubjectController.deleteUserFromSubject);
 
 module.exports = router;
