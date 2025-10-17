@@ -2,7 +2,6 @@ const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
 
-// 1 GB limit
 const MAX_FILE_SIZE = 100 * 1024 * 1024;
 const uploadDir = path.join(process.cwd(), "uploads", "docs");
 fs.mkdirSync(uploadDir, { recursive: true });
