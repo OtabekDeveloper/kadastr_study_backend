@@ -1,13 +1,10 @@
-const AttechedSubjectController = require("../../controller/admin/attechedSubject.controller");
+const AttechedSubjectController = require("../../controller/mobile/userSubject.controller");
 const authenticate = require("../../utils/authenticate");
 const router = require("express").Router();
-const { uploadFiles } = require("../../utils/uploadFile");
 
 router.use(authenticate);
-router.route("/").post(AttechedSubjectController.addNew);
+router.route("/").post(AttechedSubjectController.addPublicCourses);
 router.route("/").get(AttechedSubjectController.getAllUserSubject);
 router.route("/:id").get(AttechedSubjectController.getOneUserSubject);
-
-router.route("/:id").delete(AttechedSubjectController.deleteUserFromSubject);
 
 module.exports = router;

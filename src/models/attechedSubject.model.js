@@ -11,6 +11,10 @@ const AttachedSubjectSchema = new mongoose.Schema(
     lessonStep: { type: Number },
     result: [
       {
+        date: { type: String },
+        time: { type: String },
+        startTime: { type: String },
+        endTime: { type: String },
         total: { type: Number },
         correctCount: { type: Number },
         inCorrectCount: { type: Number },

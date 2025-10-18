@@ -19,15 +19,16 @@ module.exports = {
           $regex: new RegExp(search, "i"),
         };
       }
-      if (active !== undefined) {
-        data.active = active === "true";
-      }
+      // if (active !== undefined) {
+      //   data.active = active === "true";
+      // }
 
       // if (isPublic !== undefined) {
       //   data.isPublic = isPublic === "true";
       // }
 
       data.isPublic = true;
+      data.active = true;
 
       let docs;
 

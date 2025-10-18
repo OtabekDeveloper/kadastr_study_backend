@@ -141,6 +141,7 @@ module.exports = {
       return res.status(400).json({ message: error.message });
     }
   },
+
   deleteUserFromSubject: async (req, res) => {
     try {
       const { id } = req.params;

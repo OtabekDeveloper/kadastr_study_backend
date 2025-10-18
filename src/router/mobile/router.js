@@ -9,6 +9,8 @@ const GroupRouter = require("./group.router");
 const UserRouter = require("./user.router");
 const SubjectRouter = require("./subject.router");
 const LessonRouter = require("./lesson.router");
+const UserSubjectRouter = require("./userSubject.router");
+const CheckTetsRouter = require("./checkTest.router");
 
 router.use("/user", UserRouter);
 router.use("/province", ProvinceRouter);
@@ -19,5 +21,7 @@ router.use("/news", NewsRouter);
 router.use("/group", GroupRouter);
 router.use("/subject", SubjectRouter);
 router.use("/lesson", LessonRouter);
+router.use("/usersubject", UserSubjectRouter);
+router.use("/attached", CheckTetsRouter);
 
 module.exports = router;
