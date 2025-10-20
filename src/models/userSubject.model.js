@@ -9,25 +9,7 @@ const UserSubjectSchema = new mongoose.Schema(
     date: { type: String, default: null },
     startDate: { type: String, default: null },
     endDate: { type: String, default: null },
-    complateCount: { type: Number, default: 0 }, // default:0
     totalLesson: { type: Number, default: 0 }, // default:0
-    preTestScore: { type: Number, default: null }, // boshlang‘ich test
-    postTestScore: { type: Number, default: null }, // yakuniy test
-    attemptCount: { type: Number, default: 0 }, // test topshirishlar soni
-    canAccessLessons: { type: Boolean, default: true },
-    isComplated: { type: Boolean, default: false },
-    result: [
-      {
-        date: { type: String },
-        time: { type: String },
-        startTime: { type: String },
-        endTime: { type: String },
-        total: { type: Number },
-        correctCount: { type: Number },
-        inCorrectCount: { type: Number },
-        present: { type: Number },
-      },
-    ],
   },
   { timestamps: true, versionKey: false }
 );

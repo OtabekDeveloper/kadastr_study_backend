@@ -10,7 +10,7 @@ const UserSchema = new mongoose.Schema(
     phone: { type: String },
     password: { type: String },
     role: { type: String }, // user
-    photo: { type: String }, // default null
+    photo: { type: String, default:null }, // default null
     province: { type: mongoose.Schema.Types.ObjectId, ref: "province" },
     region: { type: mongoose.Schema.Types.ObjectId, ref: "region" },
     group: { type: mongoose.Schema.Types.ObjectId, ref: "group" },

@@ -1,4 +1,5 @@
 const UserModel = require("../../models/user.model");
+const { deleteFile } = require("../../utils/deleteFile");
 
 module.exports = {
   getOne: async function (req, res) {
@@ -30,8 +31,15 @@ module.exports = {
     try {
       const doc = await UserModel.findById(req.params.id);
       if (!doc) {
+        if (req.body?.file) {
+          deleteFile(doc?.photo)
+        }
         return res.status(404).json({ message: "Ma'lumot topilmadi" });
       }
+      if (req.body?.file) {
+        deleteFile(doc?.photo)
+      }
+
       const result = await UserModel.findByIdAndUpdate(req.params.id, {
         ...req.body,
         photo: req.body.file,

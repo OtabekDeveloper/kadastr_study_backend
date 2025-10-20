@@ -33,6 +33,7 @@ const models = {
     photo: String, // default null
     province: String, // ObjectId
     region: String, // ObjectId
+    group: String, // ObjectId
   },
 
   // fanlar(Yo'nalishlar)
@@ -42,7 +43,7 @@ const models = {
     photo: String,
     active: Boolean, // aktivligi default : true
     isPublic: Boolean, //  default: false
-    lessonCount: Number, // default:0
+    totalLesson: Number, // default:0
   },
 
   // darslar
@@ -66,7 +67,7 @@ const models = {
     date: String, // biriktirilgan sana
     startDate: String, // YYYY-MM-DD
     endDate: String, // YYYY-MM-DD
-    complateCount: Number, // default:0
+    totalLesson: Number, // default:0
   },
 
     // Userni lesson
@@ -78,6 +79,7 @@ const models = {
       lessonStep: Number,
       result: [ // 5 talik testlar natijasi saqlanadi holos, 56% dan kop ishlagani o'tadi, kam ishlagan bolsa bosh qolaveradi
         {
+          date: String,
           total: Number,
           correctCount: Number,
           inCorrectCount: Number,
