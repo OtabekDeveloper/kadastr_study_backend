@@ -25,14 +25,14 @@ module.exports = {
         await AttachedModel.create({
           subject: doc?.subject,
           lesson: doc?._id,
-          user: userSubjects[0]?.user,
+          user: userSubjects[i]?.user,
           isPassed: false,
           lessonStep: doc?.step,
         });
 
         await UserSubject.findOneAndUpdate(
           {
-            user: userSubjects[0]?.user,
+            user: userSubjects[i]?.user,
             subject: req.body?.subject,
           },
           {

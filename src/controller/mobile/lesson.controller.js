@@ -1,4 +1,4 @@
-const LessonModel = require("../../models/lesson.model");
+const LessonModel = require("../../models/attechedSubject.model");
 
 module.exports = {
   getAll: async function (req, res) {
@@ -7,7 +7,7 @@ module.exports = {
       let data = {};
       const page = parseInt(req.query?.page);
       const limit = parseInt(req.query?.limit);
-
+      data["user"] = req.user?._id;
       const options = {
         sort: { createdAt: 1, step: 1 },
         page: page,
@@ -15,6 +15,11 @@ module.exports = {
         populate: [
           {
             path: "subject",
+            select: ["-createdAt", "-updatedAt"],
+          },
+          {
+            path: "lesson",
+            select: ["-createdAt", "-updatedAt"],
           },
         ],
       };
@@ -39,6 +44,11 @@ module.exports = {
           .populate([
             {
               path: "subject",
+              select: ["-createdAt", "-updatedAt"],
+            },
+            {
+              path: "lesson",
+              select: ["-createdAt", "-updatedAt"],
             },
           ]);
       }

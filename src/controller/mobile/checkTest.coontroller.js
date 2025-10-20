@@ -1,9 +1,9 @@
 const TestModel = require("../../models/test.model");
 const AttachedSubjectModel = require("../../models/attechedSubject.model");
 const UserSubjectModel = require("../../models/userSubject.model");
-
 const mongoose = require("mongoose");
 const moment = require("moment");
+
 module.exports = {
   answerTestLessonSubject: async (req, res) => {
     try {
@@ -40,6 +40,7 @@ module.exports = {
         correctCount: 0,
         inCorrectCount: 0,
         present: 0,
+        status: 1,
       };
 
       attached.result.push(newResult);
@@ -124,6 +125,7 @@ module.exports = {
         total,
         present,
         time: durationFormatted,
+        status: 2,
       };
 
       if (present >= 60) {

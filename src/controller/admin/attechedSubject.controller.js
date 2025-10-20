@@ -3,7 +3,6 @@ const SubjectModel = require("../../models/subject.model");
 const LessonModel = require("../../models/lesson.model");
 const UserModel = require("../../models/user.model");
 const UserSubject = require("../../models/userSubject.model");
-const { deleteFile } = require("../../utils/deleteFile");
 const moment = require("moment");
 
 module.exports = {
