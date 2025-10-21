@@ -16,6 +16,7 @@ const AttachedSubjectSchema = new mongoose.Schema(
         correctCount: { type: Number },
         inCorrectCount: { type: Number },
         present: { type: Number },
+        time: { type: String },
       },
     ],
   },

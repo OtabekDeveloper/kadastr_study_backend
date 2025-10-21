@@ -70,7 +70,7 @@ module.exports = {
 
   finishTestLessonSubject: async (req, res) => {
     try {
-      const { attachedId, resultId, tests, startTime } = req.body;
+      const { attachedId, resultId, tests, time } = req.body;
 
       if (!attachedId || !resultId || !tests || !tests.length) {
         return res.status(400).json({
@@ -112,11 +112,6 @@ module.exports = {
       const present = Math.round((correctCount / total) * 100);
 
       const endTime = moment();
-      const start = moment(startTime, "YYYY-MM-DD HH:mm");
-      const durationMs = moment.duration(endTime.diff(start));
-      const durationFormatted = moment
-        .utc(durationMs.asMilliseconds())
-        .format("mm:ss");
 
       attached.result[resultIndex] = {
         ...attached.result[resultIndex]._doc,
@@ -125,7 +120,7 @@ module.exports = {
         inCorrectCount,
         total,
         present,
-        time: durationFormatted,
+        time: time,
         status: 2,
       };
 
