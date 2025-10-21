@@ -33,16 +33,17 @@ module.exports = {
         return res.status(400).json({ message: "Subject allready attached" });
       }
 
-      const lessons = await LessonModel.find({ subject });
-      for (let i = 0; i < lessons?.length; i++) {
-        await AttachedModel.create({
-          subject,
-          lesson: lessons[i],
-          user: user,
-          isPassed: false,
-          lessonStep: lessons[i]?.step,
-        });
-      }
+      // const lessons = await LessonModel.find({ subject });
+      // for (let i = 0; i < lessons?.length; i++) {
+      //   await AttachedModel.create({
+      //     subject,
+      //     lesson: lessons[i],
+      //     user: user,
+      //     isPassed: false,
+      //     lessonStep: lessons[i]?.step,
+      //   });
+      // }
+      
       await UserSubject.create({
         subject,
         user,

@@ -27,16 +27,9 @@ module.exports = {
             {
               path: "subject",
               select: "title desc photo active isPublic",
-            },
-            {
-              path: "user",
-              select: "firstName lastName photo group",
-              populate: {
-                path: "group",
-                select: "name startDate endDate",
-              },
-            },
+            }
           ],
+          select:["-user", "-createdAt", "-updatedAt"]
         };
 
         const data = await UserSubject.paginate(filter, options);
@@ -49,14 +42,7 @@ module.exports = {
             path: "subject",
             select: "title desc photo active isPublic",
           })
-          .populate({
-            path: "user",
-            select: "firstName lastName photo group",
-            populate: {
-              path: "group",
-              select: "name startDate endDate",
-            },
-          });
+          .select(["-user", "-createdAt", "-updatedAt"])
 
         return res.status(200).json(data);
       }
@@ -68,7 +54,7 @@ module.exports = {
   getOneUserSubject: async (req, res) => {
     try {
       const { id } = req.params;
-      const userId = req.user?.id;
+      const userId = req.user?._id;
 
       if (!userId) {
         return res.status(400).json({ message: "User ID not found" });
@@ -82,14 +68,7 @@ module.exports = {
           path: "subject",
           select: "title desc photo active isPublic",
         })
-        .populate({
-          path: "user",
-          select: "firstName lastName photo group",
-          populate: {
-            path: "group",
-            select: "name startDate endDate",
-          },
-        });
+        .select(["-user", "-createdAt", "-updatedAt"])
 
       if (!data) {
         return res.status(404).json({ message: "User subject not found" });

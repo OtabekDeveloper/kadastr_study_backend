@@ -1,9 +1,12 @@
 const TestModel = require("../../models/test.model");
 const AttachedSubjectModel = require("../../models/attechedSubject.model");
 const UserSubjectModel = require("../../models/userSubject.model");
+const SubjectTest = require("../../models/SubjectTest.model");
+const AttachedModel = require("../../models/attechedSubject.model");
+
 const mongoose = require("mongoose");
 const moment = require("moment");
-const SubjectTest = require("../../models/SubjectTest.model");
+const lessonModel = require("../../models/lesson.model");
 
 module.exports = {
   answerTestLessonSubject: async (req, res) => {
@@ -152,7 +155,7 @@ module.exports = {
 
   answerFinalTest: async (req, res) => {
     try {
-      const { subject } = req.body;
+      const { subject, testType } = req.body;
       const userId = req.user?._id;
 
       if (!subject) {
@@ -161,51 +164,65 @@ module.exports = {
 
       const subjectId = new mongoose.Types.ObjectId(subject);
 
-      if (req.body?.testType == 1) {
-        const subjectTestDoc = await SubjectTest.findOne({
+      if (testType == 1) {
+        const exists = await SubjectTest.exists({
           user: userId,
           subject: subjectId,
           testType: 1,
         });
-        if (subjectTestDoc) {
+        if (exists) {
           return res.status(400).json({
             message:
-              "Siz oldin boshlang'ich test ishlagansiz, endi darslarni tugatgandan so'ng yakuniy test ishlashingiz mumkin",
+              "Siz oldin boshlang'ich test ishlagansiz, endi darslarni tugatgandan so‘ng yakuniy test ishlashingiz mumkin",
           });
         }
       }
 
-      const lessons = await TestModel.distinct("lesson", {
-        subject: subjectId,
-      });
+      const lessons = await TestModel.distinct("lesson", { subject: subjectId });
 
       if (!lessons.length) {
-        return res
-          .status(404)
-          .json({ message: "Bu fanga oid testlar topilmadi" });
+        return res.status(404).json({ message: "Bu fanga oid testlar topilmadi" });
       }
 
-      let allTests = [];
+      const testsPerLesson = await Promise.all(
+        lessons.map((lessonId) =>
+          TestModel.aggregate([
+            { $match: { subject: subjectId, lesson: lessonId } },
+            { $sample: { size: 1 } },
+            { $project: { question: 1, options: 1, subject: 1, lesson: 1, file: 1 } },
+          ])
+        )
+      );
 
-      for (const lessonId of lessons) {
-        const lessonTests = await TestModel.aggregate([
-          { $match: { subject: subjectId, lesson: lessonId } },
-          { $sample: { size: 2 } }, // har bir darsdan 1-2 ta test
-        ]);
-        allTests.push(...lessonTests);
-      }
+      // Flatten
+      let allTests = testsPerLesson.flat();
 
-      if (allTests.length < 30) {
+
+      const testIds = new Set(allTests.map((t) => t._id.toString()));
+
+
+      const TEST_LIMIT = 30;
+      if (allTests.length < TEST_LIMIT) {
+        const remaining = TEST_LIMIT - allTests.length;
+
         const extra = await TestModel.aggregate([
-          { $match: { subject: subjectId } },
-          { $sample: { size: 30 - allTests.length } },
+          {
+            $match: {
+              subject: subjectId,
+              _id: { $nin: Array.from(testIds, (id) => new mongoose.Types.ObjectId(id)) },
+            },
+          },
+          { $sample: { size: remaining } },
+          { $project: { question: 1, options: 1, subject: 1, lesson: 1, file: 1 } },
         ]);
+
         allTests.push(...extra);
       }
 
-      if (allTests.length > 30) {
-        allTests = allTests.sort(() => 0.5 - Math.random()).slice(0, 30);
+      if (allTests.length > TEST_LIMIT) {
+        allTests = allTests.sort(() => Math.random() - 0.5).slice(0, TEST_LIMIT);
       }
+
 
       const formattedTests = allTests.map((test) => ({
         ...test,
@@ -215,21 +232,22 @@ module.exports = {
         })),
       }));
 
-      const now = moment().format("YYYY-MM-DD HH:mm:ss");
+
+      const now = new Date().toISOString();
 
       const doc = await SubjectTest.create({
         user: userId,
         subject: subjectId,
         questions: formattedTests,
-        startDate: now,
-        testType: req.body?.testType,
+        startDate: moment().format("YYYY-MM-DD HH:mm"),
+        testType,
       });
 
       return res.status(200).json({
-        questions: doc?.questions,
-        startDate: doc?.startDate,
-        testCount: doc?.questions?.length,
-        _id: doc?._id,
+        questions: doc.questions,
+        startDate: doc.startDate,
+        testCount: doc.questions.length,
+        _id: doc._id,
       });
     } catch (error) {
       return res.status(400).json({ message: error.message });
@@ -256,8 +274,10 @@ module.exports = {
           .json({ message: "Test topilmadi yoki sizga tegishli emas" });
       }
 
-      if (testDoc?.status == 2) {
-        return res.status(400).json({ message: "Test tugatilingan holatda" });
+      if (testDoc?.isChecked) {
+        return res
+          .status(404)
+          .json({ message: "Test tekshirilgan" });
       }
 
       let correctCount = 0;
@@ -277,34 +297,156 @@ module.exports = {
       testDoc.correctCount = correctCount;
       testDoc.endDate = moment().format("YYYY-MM-DD HH:mm:ss");
       testDoc.isPassed = percent >= 56;
-      testDoc.status = 2;
       testDoc.questions = questions;
       await testDoc.save();
 
-      if (percent >= 56) {
+      if (percent <= 56) {
         await UserSubjectModel.findOneAndUpdate(
           {
             user: userId,
             subject: testDoc?.subject,
           },
           {
-            isComplated: true,
+            isComplated: false,
+          }
+        );
+
+        const lessons = await lessonModel.find({ subject: testDoc?.subject });
+        for (let i = 0; i < lessons?.length; i++) {
+          await AttachedModel.create({
+            subject: testDoc?.subject,
+            lesson: lessons[i],
+            user: userId,
+            isPassed: false,
+            lessonStep: lessons[i]?.step,
+          });
+        }
+      } else {
+        await SubjectTest.findById(testDoc?._id,
+          {
+            isPassed: true,
           }
         );
       }
 
+      await SubjectTest.findByIdAndUpdate(testDoc?._id, {
+        isChecked: true,
+        status: 2,
+        questions
+      })
+
       return res.status(200).json({
-        message: "Test yakunlandi",
-        data: {
-          total,
-          correctCount,
-          inCorrectCount,
-          percent,
-          isPassed: testDoc.isPassed,
-        },
+        testId: testDoc?._id,
+        total,
+        correctCount,
+        inCorrectCount,
+        percent,
+        isPassed: testDoc.isPassed,
       });
     } catch (error) {
       return res.status(400).json({ message: error.message });
     }
   },
+
+  ContinueFinalTest: async (req, res) => {
+    try {
+      const { subject } = req.body
+      const userId = req.user?._id;
+
+      const docs = await SubjectTest.find({
+        user: userId,
+        subject,
+        isChecked: false
+      })
+        .populate({
+          path: "subject", select: ["title"]
+        })
+        .select(["subject", "startDate", "endDate", "questions", "isChecked", "endDate"]);
+
+
+
+
+      return res.status(200).json(docs);
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
+    }
+  },
+
+  // Agar user testdan o'tsa subject boyicha tanlov qilih
+  CompletionTest: async (req, res) => {
+    try {
+      const { isCompletion, testId } = req.body;
+      const userId = req.user?._id;
+
+      const testDoc = await SubjectTest.findOne({
+        _id: testId,
+        user: userId,
+      });
+
+      if (!testDoc) {
+        return res
+          .status(404)
+          .json({ message: "Test topilmadi yoki sizga tegishli emas" });
+      }
+
+      if (!testDoc?.isChecked) {
+        return res
+          .status(404)
+          .json({ message: "Test yakunlanmagan" });
+      }
+
+      if (!testDoc?.isPassed) {
+        return res.status(400).json({ message: "test is not passed " })
+      }
+
+      const result = await UserSubjectModel.findOne(
+        {
+          user: userId,
+          subject: testDoc?.subject,
+        }
+      );
+      if(result?.isComplated){
+        return res.status(400).json({message:"Subject allready complated"})
+      }
+
+      let choice = null
+      if (isCompletion) {
+        choice = true
+      } else {
+        choice = false
+      }
+      const lessons = await lessonModel.find({ subject: testDoc?.subject });
+      for (let i = 0; i < lessons?.length; i++) {
+        await AttachedModel.create({
+          subject: testDoc?.subject,
+          lesson: lessons[i],
+          user: userId,
+          isPassed: choice,
+          lessonStep: lessons[i]?.step,
+        });
+      }
+
+      await UserSubjectModel.findOneAndUpdate(
+        {
+          user: userId,
+          subject: testDoc?.subject,
+        },
+        {
+          isComplated: true,
+        }
+      );
+      console.log({
+        user: userId,
+        subject: testDoc?.subject,
+      })
+
+      return res.status(200).json({
+        message: "success"
+      });
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
+    }
+  },
+
+
 };
