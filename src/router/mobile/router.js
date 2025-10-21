@@ -22,7 +22,7 @@ router.use("/news", NewsRouter);
 router.use("/group", GroupRouter);
 router.use("/subject", SubjectRouter);
 router.use("/lesson", LessonRouter);
-router.use("/usersubject", UserSubjectRouter);
+router.use("/user-subject", UserSubjectRouter);
 router.use("/attached", CheckTetsRouter);
 router.use("/subjecttest", SubjectTestRouter);
 

@@ -19,6 +19,7 @@ module.exports = {
           $regex: new RegExp(search, "i"),
         };
       }
+      data["active"] = true
 
       let docs;
 
