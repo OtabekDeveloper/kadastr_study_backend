@@ -12,7 +12,7 @@ const AttachedSubjectSchema = new mongoose.Schema(
     result: [
       {
         date: { type: String },
-        total:{ type: Number },
+        total: { type: Number },
         correctCount: { type: Number },
         inCorrectCount: { type: Number },
         present: { type: Number },

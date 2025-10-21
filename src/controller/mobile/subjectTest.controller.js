@@ -3,7 +3,7 @@ const SubjectTestModel = require("../../models/SubjectTest.model");
 module.exports = {
   getAllSubjectTest: async (req, res) => {
     try {
-      const { subject, limit, user, page, isPassed, testType } = req.query;
+      const { subject, limit, page, isPassed, testType } = req.query;
       let data = {};
 
       if (subject) {
@@ -12,9 +12,7 @@ module.exports = {
       if (testType) {
         data["testType"] = testType;
       }
-      if (user) {
-        data["user"] = user;
-      }
+      data["user"] = req.user?._id;
 
       if (typeof isPassed !== "undefined") {
         data["isPassed"] = isPassed === "true";
