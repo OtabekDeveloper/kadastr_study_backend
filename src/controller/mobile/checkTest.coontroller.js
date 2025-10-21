@@ -61,7 +61,7 @@ module.exports = {
         tests: formattedTests,
         attachedId: attached?._id,
         resultId: currentResultId,
-        startTime: newResult.startTime,
+        time: "",
       });
     } catch (error) {
       return res.status(400).json({ message: error.message });
