@@ -7,10 +7,13 @@ const NewsRouter = require("./news.router");
 const GroupRouter = require("./group.router");
 const UserRouter = require("./user.router");
 const SubjectRouter = require("./subject.router");
+const SubjectTestRouter = require("./subjectTest.router");
 const LessonRouter = require("./lesson.router");
 const TestRouter = require("./test.router");
-const AttechedRouter = require("./attechedSubject.router")
+const AttechedRouter = require("./attechedSubject.router");
+const AttachedLessonRouter = require("./attachedSubjectLesson.router");
 
+router.use("/attachedlesson", AttachedLessonRouter);
 router.use("/province", ProvinceRouter);
 router.use("/region", RegionRouter);
 router.use("/bookcategory", BookCategoryRouter);
@@ -19,8 +22,9 @@ router.use("/news", NewsRouter);
 router.use("/group", GroupRouter);
 router.use("/user", UserRouter);
 router.use("/subject", SubjectRouter);
+router.use("/subjecttest", SubjectTestRouter);
 router.use("/lesson", LessonRouter);
 router.use("/test", TestRouter);
-router.use("/atteched-subject", AttechedRouter)
+router.use("/atteched-subject", AttechedRouter);
 
 module.exports = router;

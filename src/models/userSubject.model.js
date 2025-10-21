@@ -10,6 +10,7 @@ const UserSubjectSchema = new mongoose.Schema(
     startDate: { type: String, default: null },
     endDate: { type: String, default: null },
     totalLesson: { type: Number, default: 0 }, // default:0
+    isComplated: { type: Boolean, default: false }, // true-fanni tugatgan , false - tugatmagan
   },
   { timestamps: true, versionKey: false }
 );

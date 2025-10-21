@@ -8,11 +8,11 @@ const SubjectTestSchema = new mongoose.Schema(
     subject: { type: mongoose.Schema.Types.ObjectId, ref: "subject" },
     startDate: { type: String },
     endDate: { type: String },
-    questions: [
-    ], // 30 ta fanda mavjud hamma darslardan aralashtirib olinadi
+    questions: [], // 30 ta fanda mavjud hamma darslardan aralashtirib olinadi
     correctCount: { type: Number, default: 0 },
-    testType: { type: Number, default: 1 },  // 1=> yonalish boshida ishlangan test, 2=> darslarni tugatgandagi test
-    isPassed: { type: Bollean, default: false }, // true o'tgan, false o'tolmagan  56% dan kam bolsa o'tmagan hisoblanadi
+    testType: { type: Number, default: 1 }, // 1=> yonalish boshida ishlangan test, 2=> darslarni tugatgandagi test
+    isPassed: { type: Boolean, default: false }, // true o'tgan, false o'tolmagan  56% dan kam bolsa o'tmagan hisoblanadi
+    status: { type: Number, default: 1 }, // 1-boshlangan, 2- tugatilingan test
   },
   { versionKey: false, timestamps: true }
 );

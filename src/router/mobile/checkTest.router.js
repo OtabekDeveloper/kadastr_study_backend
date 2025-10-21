@@ -7,6 +7,6 @@ router.route("/starttest").post(CheckTestController.answerTestLessonSubject);
 router.route("/finishtest").post(CheckTestController.finishTestLessonSubject);
 
 router.route("/startfinal").post(CheckTestController.answerFinalTest);
-// router.route("/finishfinal").post(CheckTestController.finishFinalTest);
+router.route("/finishfinal").post(CheckTestController.finishFinalTest);
 
 module.exports = router;
