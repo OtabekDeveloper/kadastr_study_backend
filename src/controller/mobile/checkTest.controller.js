@@ -475,10 +475,6 @@ module.exports = {
           isComplated: true,
         }
       );
-      console.log({
-        user: userId,
-        subject: testDoc?.subject,
-      });
 
       return res.status(200).json({
         message: "success",
