@@ -157,7 +157,7 @@ module.exports = {
       });
       console.log(dataDoc);
 
-      if (Array.isArray(dataDoc) && !dataDoc.length) {
+      if (Array.isArray(dataDoc) && dataDoc.length) {
         console.log("If >>>>>>>>>>>>>");
 
         let correntArg = 0;
