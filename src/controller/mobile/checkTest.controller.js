@@ -170,28 +170,36 @@ module.exports = {
       }
 
       const subjectId = new mongoose.Types.ObjectId(subject);
-      // yakuniy
       if (testType == 2) {
-        let isComplatedSubject = await AttachedModel.findOne({
+        const lastLesson = await AttachedModel.findOne({
           user: userId,
           subject: subjectId,
         }).sort({ lessonStep: -1 });
 
-        if (isComplatedSubject) {
-          const lastPassedLesson = await AttachedSubjectModel.findOne({
-            user: userId,
-            subject: subjectId,
-            isPassed: true,
-          }).sort({ lessonStep: -1 });
-
+        if (!lastLesson) {
           return res.status(400).json({
-            message: `Hurmatli foydalanuvchi, Sizga yakuniy uchun ruxsat berilmaydi, Siz ${
-              lastPassedLesson.lessonStep + 1
-            }-dars  testlaridan o'tmagansiz`,
+            message: "Siz hali bu fanga oid darslarni boshlamagansiz.",
+          });
+        }
+
+        const lastPassedLesson = await AttachedModel.findOne({
+          user: userId,
+          subject: subjectId,
+          isPassed: true,
+        }).sort({ lessonStep: -1 });
+
+        if (
+          lastPassedLesson &&
+          lastLesson.lessonStep === lastPassedLesson.lessonStep &&
+          lastPassedLesson.isPassed
+        ) {
+        } else {
+          const nextStep = (lastPassedLesson?.lessonStep || 0) + 1;
+          return res.status(400).json({
+            message: `Hurmatli foydalanuvchi, Sizga yakuniy test uchun ruxsat berilmaydi. Avval ${nextStep}-dars testlaridan o'ting.`,
           });
         }
       }
-
       if (testType == 1) {
         const exists = await SubjectTest.exists({
           user: userId,
