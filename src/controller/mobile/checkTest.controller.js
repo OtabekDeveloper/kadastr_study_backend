@@ -93,6 +93,12 @@ module.exports = {
         return res.status(404).json({ message: "Attached subject topilmadi" });
       }
 
+      if (attached.isPassed == true) {
+        return res.status(400).json({
+          message: "Bu dars testidan o'tgansiz, keyingi bosqichga o'ting",
+        });
+      }
+
       const resultIndex = attached.result.findIndex(
         (r) => String(r._id) === String(resultId)
       );
@@ -155,11 +161,8 @@ module.exports = {
         user: req.user?._id,
         isPassed: true,
       });
-      console.log(dataDoc);
 
       if (Array.isArray(dataDoc) && dataDoc.length) {
-        console.log("If >>>>>>>>>>>>>");
-
         let correntArg = 0;
         dataDoc.map((item) => {
           correntArg += item?.correctCount || 0;
@@ -167,8 +170,6 @@ module.exports = {
 
         let reytingLesson = correntArg / (dataDoc?.length || 1);
         reytingLesson = Number(reytingLesson.toFixed(2));
-        console.log(">>>>>>>>>>>>", reytingLesson);
-
         await UserSubjectModel.findOneAndUpdate(
           {
             user: req.user?._id,
@@ -393,7 +394,7 @@ module.exports = {
           subject: testDoc?.subject,
         },
         {
-          reytingSubject: correctCount,
+          reytingSubject: testDoc.correctCount,
         }
       );
       if (percent <= 56) {
