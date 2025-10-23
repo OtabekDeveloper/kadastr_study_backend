@@ -169,6 +169,7 @@ module.exports = {
         return res.status(400).json({ message: "subject ID kerak" });
       }
 
+      const subjectId = new mongoose.Types.ObjectId(subject);
       // yakuniy
       if (testType == 2) {
         let isComplatedSubject = await AttachedModel.findOne({
@@ -188,8 +189,6 @@ module.exports = {
           });
         }
       }
-
-      const subjectId = new mongoose.Types.ObjectId(subject);
 
       if (testType == 1) {
         const exists = await SubjectTest.exists({
