@@ -183,6 +183,7 @@ module.exports = {
             subject: subjectId,
             isPassed: true,
           }).sort({ lessonStep: -1 });
+          console.log(lastPassedLesson);
 
           return res.status(400).json({
             message: `Hurmatli foydalanuvchi, Sizga yakuniy uchun ruxsat berilmaydi, Siz ${lastPassedLesson.lessonStep}-dars  testlaridan o'tmagansiz`,
