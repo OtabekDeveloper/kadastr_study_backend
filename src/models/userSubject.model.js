@@ -12,6 +12,8 @@ const UserSubjectSchema = new mongoose.Schema(
     complateCount: { type: Number, default: 0 },
     totalLesson: { type: Number, default: 0 }, // default:0
     isComplated: { type: Boolean, default: false }, // true-fanni tugatgan , false - tugatmagan
+    reytingLesson: { type: Number, default: 0 },
+    reytingSubject: { type: Number, default: 0 },
   },
   { timestamps: true, versionKey: false }
 );

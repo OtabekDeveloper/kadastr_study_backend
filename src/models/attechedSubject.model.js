@@ -9,13 +9,14 @@ const AttachedSubjectSchema = new mongoose.Schema(
     user: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
     isPassed: { type: Boolean, default: false },
     lessonStep: { type: Number },
+    correctCount: { type: Number, default: 0 },
     result: [
       {
         date: { type: String },
-        total: { type: Number },
-        correctCount: { type: Number },
-        inCorrectCount: { type: Number },
-        present: { type: Number },
+        total: { type: Number, default: 0 },
+        correctCount: { type: Number, default: 0 },
+        inCorrectCount: { type: Number, default: 0 },
+        present: { type: Number, default: 0 },
         time: { type: String },
       },
     ],

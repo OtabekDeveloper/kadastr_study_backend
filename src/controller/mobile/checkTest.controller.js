@@ -25,11 +25,11 @@ module.exports = {
         user: req?.user?._id,
       });
 
-      // if (attached.isPassed == true) {
-      //   return res.status(400).json({
-      //     message: "Bu dars testidan o'tgansiz, keyingi bosqichga o'ting",
-      //   });
-      // }
+      if (attached.isPassed == true) {
+        return res.status(400).json({
+          message: "Bu dars testidan o'tgansiz, keyingi bosqichga o'ting",
+        });
+      }
 
       const tests = await TestModel.aggregate([
         { $match: { lesson: lessonId, subject: subjectId } },
@@ -145,9 +145,35 @@ module.exports = {
           }
         );
         attached.isPassed = true;
+        attached.correctCount = correctCount;
       }
 
       await attached.save();
+
+      const dataDoc = await AttachedModel.find({
+        subject: attached?.subject,
+        user: req.user?._id,
+        isPassed: true,
+      });
+
+      if (Array.isArray(dataDoc) && !dataDoc.length) {
+        let correntArg = 0;
+        dataDoc.map((item) => {
+          correntArg += item?.correctCount || 0;
+        });
+
+        let reytingLesson = correntArg / (dataDoc?.length || 1);
+        reytingLesson = Number(reytingLesson.toFixed(2));
+        await UserSubjectModel.findOneAndUpdate(
+          {
+            user: req.user?._id,
+            subject: attached?.subject,
+          },
+          {
+            reytingLesson: reytingLesson,
+          }
+        );
+      }
 
       return res.status(200).json({
         success: true,
@@ -356,7 +382,15 @@ module.exports = {
       testDoc.isPassed = percent >= 56;
       testDoc.questions = questions;
       await testDoc.save();
-
+      await UserSubjectModel.findOne(
+        {
+          user: userId,
+          subject: testDoc?.subject,
+        },
+        {
+          reytingSubject: correctCount,
+        }
+      );
       if (percent <= 56) {
         await UserSubjectModel.findOneAndUpdate(
           {
