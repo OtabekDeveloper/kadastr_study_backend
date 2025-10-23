@@ -67,7 +67,7 @@ module.exports = {
           .select(["-subject"]);
       }
 
-      return res.status(200).json({ docs, status: 2 });
+      return res.status(200).json(docs);
     } catch (error) {
       return res.status(400).json({ message: error.message });
     }

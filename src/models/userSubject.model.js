@@ -14,6 +14,7 @@ const UserSubjectSchema = new mongoose.Schema(
     isComplated: { type: Boolean, default: false }, // true-fanni tugatgan , false - tugatmagan
     reytingLesson: { type: Number, default: 0 },
     reytingSubject: { type: Number, default: 0 },
+    group: { type: mongoose.Schema.Types.ObjectId, ref: "group" },
   },
   { timestamps: true, versionKey: false }
 );

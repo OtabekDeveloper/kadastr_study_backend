@@ -52,6 +52,7 @@ module.exports = {
         endDate: userData?.group?.endDate,
         complateCount: 0,
         totalLesson: lessons?.length,
+        group: userData?.group?._id,
       });
 
       return res.status(201).json({ message: "success" });
