@@ -19,15 +19,22 @@ module.exports = {
       const lessonId = new mongoose.Types.ObjectId(lesson);
       const subjectId = new mongoose.Types.ObjectId(subject);
 
-      const tests = await TestModel.aggregate([
-        { $match: { lesson: lessonId, subject: subjectId } },
-        { $sample: { size: 5 } },
-      ]);
       let attached = await AttachedSubjectModel.findOne({
         subject: subjectId,
         lesson: lessonId,
         user: req?.user?._id,
       });
+
+      if (attached.isPassed == true) {
+        return res.status(400).json({
+          message: "Bu dars testidan o'tgansiz, keyingi bosqichga o'ting",
+        });
+      }
+
+      const tests = await TestModel.aggregate([
+        { $match: { lesson: lessonId, subject: subjectId } },
+        { $sample: { size: 5 } },
+      ]);
       if (!tests.length) {
         return res
           .status(404)
@@ -127,7 +134,7 @@ module.exports = {
         status: 2,
       };
 
-      if (present >= 60) {
+      if (present >= 56) {
         await UserSubjectModel.findOneAndUpdate(
           {
             user: req.user?._id,
@@ -473,6 +480,7 @@ module.exports = {
         },
         {
           isComplated: true,
+          complateCount: lessons.length,
         }
       );
 

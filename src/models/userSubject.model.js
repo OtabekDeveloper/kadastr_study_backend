@@ -9,6 +9,7 @@ const UserSubjectSchema = new mongoose.Schema(
     date: { type: String, default: null },
     startDate: { type: String, default: null },
     endDate: { type: String, default: null },
+    complateCount: { type: Number, default: 0 },
     totalLesson: { type: Number, default: 0 }, // default:0
     isComplated: { type: Boolean, default: false }, // true-fanni tugatgan , false - tugatmagan
   },
