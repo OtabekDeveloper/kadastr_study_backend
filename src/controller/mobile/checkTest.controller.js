@@ -25,11 +25,11 @@ module.exports = {
         user: req?.user?._id,
       });
 
-      if (attached.isPassed == true) {
-        return res.status(400).json({
-          message: "Bu dars testidan o'tgansiz, keyingi bosqichga o'ting",
-        });
-      }
+      // if (attached.isPassed == true) {
+      //   return res.status(400).json({
+      //     message: "Bu dars testidan o'tgansiz, keyingi bosqichga o'ting",
+      //   });
+      // }
 
       const tests = await TestModel.aggregate([
         { $match: { lesson: lessonId, subject: subjectId } },
@@ -473,16 +473,18 @@ module.exports = {
         });
       }
 
-      await UserSubjectModel.findOneAndUpdate(
-        {
-          user: userId,
-          subject: testDoc?.subject,
-        },
-        {
-          isComplated: true,
-          complateCount: lessons.length,
-        }
-      );
+      if (isCompletion == true) {
+        await UserSubjectModel.findOneAndUpdate(
+          {
+            user: userId,
+            subject: testDoc?.subject,
+          },
+          {
+            isComplated: true,
+            complateCount: lessons.length,
+          }
+        );
+      }
 
       return res.status(200).json({
         message: "success",
