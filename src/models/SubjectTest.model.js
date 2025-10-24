@@ -13,7 +13,7 @@ const SubjectTestSchema = new mongoose.Schema(
     testType: { type: Number, default: 1 }, // 1=> yonalish boshida ishlangan test, 2=> darslarni tugatgandagi test
     isPassed: { type: Boolean, default: false }, // true o'tgan, false o'tolmagan  56% dan kam bolsa o'tmagan hisoblanadi
     status: { type: Number, default: 1 }, // 1-boshlangan, 2- tugatilingan test
-    isChecked:{type:Boolean, default:false} // test tekshirilganda true qilinadi
+    isChecked: { type: Boolean, default: false }, // test tekshirilganda true qilinadi
   },
   { versionKey: false, timestamps: true }
 );
