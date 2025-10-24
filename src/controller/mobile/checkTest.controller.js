@@ -443,7 +443,7 @@ module.exports = {
         await UserSubjectModel.findOneAndUpdate(
           {
             user: userId,
-            subject: subjectId,
+            subject: testDoc?.subject,
           },
           {
             status: 2,
