@@ -9,51 +9,45 @@ module.exports = {
     try {
       const { group, subject } = req.query;
 
-      if (!subject || !group) {
-        return res.status(400).json({ message: "subject and group required" })
-      }
+      // if (!subject || !group) {
+      //   return res.status(400).json({ message: "subject and group required" });
+      // }
 
-      const data = {}
+      const data = {};
 
-      data["subject"] = subject
-      data["group"] = group
-
+      data["subject"] = subject;
+      data["group"] = group;
 
       const page = parseInt(req.query?.page);
       const limit = parseInt(req.query?.limit);
 
       const options = {
-        sort: { reytingSubject: -1, reytingLesson: -1, },
+        sort: { reytingSubject: -1, reytingLesson: -1 },
         page: page,
         limit: limit,
         populate: {
-          path: "user", select: ["firstName", "lastName", "middleName"]
+          path: "user",
+          select: ["firstName", "lastName", "middleName"],
         },
-        select: [
-          "user",
-          "isComplated", 
-          "reytingLesson",
-          "reytingSubject"
-        ]
+        select: ["user", "isComplated", "reytingLesson", "reytingSubject"],
       };
 
       let docs;
-      console.log(data)
       if (limit && page) {
-        docs = await UserSubjectModel.paginate(data, options)
-
+        docs = await UserSubjectModel.paginate(data, options);
       } else {
-        docs = await UserSubjectModel.find(data).sort({ reytingSubject: -1, reytingLesson: -1, })
+        docs = await UserSubjectModel.find(data)
+          .sort({ reytingSubject: -1, reytingLesson: -1 })
           .populate({
-            path: "user", select: ["firstName", "lastName", "middleName"]
+            path: "user",
+            select: ["firstName", "lastName", "middleName"],
           })
           .select([
             "user",
             "isComplated", // true-fanni tugatgan , false - tugatmagan
             "reytingLesson",
-            "reytingSubject"
+            "reytingSubject",
           ]);
-        ;
       }
 
       return res.status(200).json(docs);
@@ -61,6 +55,4 @@ module.exports = {
       return res.status(400).json({ message: error.message });
     }
   },
-
-
 };
