@@ -232,19 +232,19 @@ module.exports = {
           });
         }
       }
-      if (testType == 1) {
-        const exists = await SubjectTest.exists({
-          user: userId,
-          subject: subjectId,
-          testType: 1,
-        });
-        if (exists) {
-          return res.status(400).json({
-            message:
-              "Siz oldin boshlang'ich test ishlagansiz, endi darslarni tugatgandan so‘ng yakuniy test ishlashingiz mumkin",
-          });
-        }
-      }
+      // if (testType == 1) {
+      //   const exists = await SubjectTest.exists({
+      //     user: userId,
+      //     subject: subjectId,
+      //     testType: 1,
+      //   });
+      //   if (exists) {
+      //     return res.status(400).json({
+      //       message:
+      //         "Siz oldin boshlang'ich test ishlagansiz, endi darslarni tugatgandan so‘ng yakuniy test ishlashingiz mumkin",
+      //     });
+      //   }
+      // }
 
       const lessons = await TestModel.distinct("lesson", {
         subject: subjectId,
