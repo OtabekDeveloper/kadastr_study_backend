@@ -51,6 +51,8 @@ module.exports = {
           "reytingSubject",
           "subject",
           "group",
+          "complateCount",
+          "totalLesson",
         ],
       };
 
@@ -81,6 +83,8 @@ module.exports = {
             "reytingSubject",
             "subject",
             "group",
+            "complateCount",
+            "totalLesson",
           ]);
       }
 
