@@ -8,6 +8,7 @@ const SubjectTestSchema = new mongoose.Schema(
     subject: { type: mongoose.Schema.Types.ObjectId, ref: "subject" },
     startDate: { type: String },
     endDate: { type: String },
+    time: { type: String, default: "" },
     questions: [], // 30 ta fanda mavjud hamma darslardan aralashtirib olinadi
     correctCount: { type: Number, default: 0 },
     testType: { type: Number, default: 1 }, // 1=> yonalish boshida ishlangan test, 2=> darslarni tugatgandagi test

@@ -337,6 +337,7 @@ module.exports = {
         questions: formattedTests,
         startDate: moment().format("YYYY-MM-DD HH:mm"),
         testType,
+        time: "0",
       });
 
       return res.status(200).json({
@@ -344,6 +345,7 @@ module.exports = {
         startDate: doc.startDate,
         testCount: doc.questions.length,
         _id: doc._id,
+        time: doc?.time,
       });
     } catch (error) {
       return res.status(400).json({ message: error.message });
@@ -352,7 +354,7 @@ module.exports = {
 
   finishFinalTest: async (req, res) => {
     try {
-      const { questions } = req.body;
+      const { questions, time } = req.body;
       const userId = req.user?._id;
       const testId = req.body?._id;
       if (!testId || !questions?.length) {
@@ -392,6 +394,7 @@ module.exports = {
       testDoc.endDate = moment().format("YYYY-MM-DD HH:mm:ss");
       testDoc.isPassed = percent >= 56;
       testDoc.questions = questions;
+      testDoc.time = time;
       await testDoc.save();
       await UserSubjectModel.findOneAndUpdate(
         {
