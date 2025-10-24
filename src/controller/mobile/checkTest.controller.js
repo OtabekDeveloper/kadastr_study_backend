@@ -324,8 +324,6 @@ module.exports = {
         })),
       }));
 
-      const now = new Date().toISOString();
-
       const doc = await SubjectTest.create({
         user: userId,
         subject: subjectId,
@@ -333,7 +331,15 @@ module.exports = {
         startDate: moment().format("YYYY-MM-DD HH:mm"),
         testType,
       });
-
+      await UserSubjectModel.findOneAndUpdate(
+        {
+          user: userId,
+          subject: subjectId,
+        },
+        {
+          status: 2,
+        }
+      );
       return res.status(200).json({
         questions: doc.questions,
         startDate: doc.startDate,
