@@ -331,17 +331,7 @@ module.exports = {
         startDate: moment().format("YYYY-MM-DD HH:mm"),
         testType,
       });
-      if (testType == 1) {
-        await UserSubjectModel.findOneAndUpdate(
-          {
-            user: userId,
-            subject: subjectId,
-          },
-          {
-            status: 2,
-          }
-        );
-      }
+
       return res.status(200).json({
         questions: doc.questions,
         startDate: doc.startDate,
@@ -437,7 +427,17 @@ module.exports = {
         status: 2,
         questions,
       });
-
+      if (testType == 1) {
+        await UserSubjectModel.findOneAndUpdate(
+          {
+            user: userId,
+            subject: subjectId,
+          },
+          {
+            status: 2,
+          }
+        );
+      }
       return res.status(200).json({
         testId: testDoc?._id,
         total,
