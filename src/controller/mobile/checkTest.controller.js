@@ -246,12 +246,13 @@ module.exports = {
               "Siz oldin boshlang'ich test ishlagansiz, endi darslarni tugatgandan so'ng yakuniy test ishlashingiz mumkin",
           });
         } else {
-          console.log("else", exists?._id);
-
-          await SubjectTest.findByIdAndDelete(exists?._id);
+          await SubjectTest.findOneAndDelete({
+            user: userId,
+            subject: subjectId,
+            testType: 1,
+            status: 1,
+          });
         }
-        let a = await SubjectTest.findById(exists?._id);
-        console.log(">>>>>>>>>>>>>", a);
       }
 
       const lessons = await TestModel.distinct("lesson", {
