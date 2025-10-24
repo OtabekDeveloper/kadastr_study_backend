@@ -331,15 +331,17 @@ module.exports = {
         startDate: moment().format("YYYY-MM-DD HH:mm"),
         testType,
       });
-      await UserSubjectModel.findOneAndUpdate(
-        {
-          user: userId,
-          subject: subjectId,
-        },
-        {
-          status: 2,
-        }
-      );
+      if (testType == 1) {
+        await UserSubjectModel.findOneAndUpdate(
+          {
+            user: userId,
+            subject: subjectId,
+          },
+          {
+            status: 2,
+          }
+        );
+      }
       return res.status(200).json({
         questions: doc.questions,
         startDate: doc.startDate,
@@ -394,7 +396,7 @@ module.exports = {
       testDoc.isPassed = percent >= 56;
       testDoc.questions = questions;
       await testDoc.save();
-      await UserSubjectModel.findOne(
+      await UserSubjectModel.findOneAndUpdate(
         {
           user: userId,
           subject: testDoc?.subject,
