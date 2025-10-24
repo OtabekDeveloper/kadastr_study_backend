@@ -30,11 +30,28 @@ module.exports = {
         sort: { reytingSubject: -1, reytingLesson: -1 },
         page: page,
         limit: limit,
-        populate: {
-          path: "user",
-          select: ["firstName", "lastName", "middleName"],
-        },
-        select: ["user", "isComplated", "reytingLesson", "reytingSubject"],
+        populate: [
+          {
+            path: "user",
+            select: ["firstName", "lastName", "middleName"],
+          },
+          {
+            path: "group",
+            select: ["title"],
+          },
+          {
+            path: "subject",
+            select: ["title"],
+          },
+        ],
+        select: [
+          "user",
+          "isComplated",
+          "reytingLesson",
+          "reytingSubject",
+          "subject",
+          "group",
+        ],
       };
 
       let docs;
@@ -43,15 +60,27 @@ module.exports = {
       } else {
         docs = await UserSubjectModel.find(data)
           .sort({ reytingSubject: -1, reytingLesson: -1 })
-          .populate({
-            path: "user",
-            select: ["firstName", "lastName", "middleName"],
-          })
+          .populate([
+            {
+              path: "user",
+              select: ["firstName", "lastName", "middleName"],
+            },
+            {
+              path: "group",
+              select: ["title"],
+            },
+            {
+              path: "subject",
+              select: ["title"],
+            },
+          ])
           .select([
             "user",
             "isComplated", // true-fanni tugatgan , false - tugatmagan
             "reytingLesson",
             "reytingSubject",
+            "subject",
+            "group",
           ]);
       }
 
