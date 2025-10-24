@@ -439,7 +439,7 @@ module.exports = {
         status: 2,
         questions,
       });
-      if (testType == 1) {
+      if (testDoc?.testType == 1) {
         await UserSubjectModel.findOneAndUpdate(
           {
             user: userId,
