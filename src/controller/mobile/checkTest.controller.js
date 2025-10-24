@@ -239,7 +239,6 @@ module.exports = {
           subject: subjectId,
           testType: 1,
         });
-        console.log(exists);
 
         if (exists && exists.status == 2 && exists.isChecked) {
           return res.status(400).json({
@@ -247,6 +246,8 @@ module.exports = {
               "Siz oldin boshlang'ich test ishlagansiz, endi darslarni tugatgandan so'ng yakuniy test ishlashingiz mumkin",
           });
         } else {
+          console.log("else", exists?._id);
+
           await SubjectTest.findByIdAndDelete(exists?._id);
         }
         let a = await SubjectTest.findById(exists?._id);
