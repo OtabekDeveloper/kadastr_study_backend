@@ -79,7 +79,9 @@ module.exports = {
         {
           path: "subject",
         },
-      ]);
+      ]).populate({
+        path:"lesson"
+      });
       if (!result) {
         return res.status(404).json({ message: "Ma'lumot topilmadi" });
       }
