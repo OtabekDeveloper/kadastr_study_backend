@@ -239,6 +239,8 @@ module.exports = {
           subject: subjectId,
           testType: 1,
         });
+        console.log(exists);
+
         if (exists && exists.status == 2 && exists.isChecked) {
           return res.status(400).json({
             message:
@@ -247,6 +249,8 @@ module.exports = {
         } else {
           await SubjectTest.findByIdAndDelete(exists?._id);
         }
+        let a = await SubjectTest.findById(exists?._id);
+        console.log(">>>>>>>>>>>>>", a);
       }
 
       const lessons = await TestModel.distinct("lesson", {
