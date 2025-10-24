@@ -15,8 +15,13 @@ module.exports = {
 
       const data = {};
 
-      data["subject"] = subject;
-      data["group"] = group;
+      if (subject) {
+        data["subject"] = subject;
+      }
+
+      if (group) {
+        data["group"] = group;
+      }
 
       const page = parseInt(req.query?.page);
       const limit = parseInt(req.query?.limit);
