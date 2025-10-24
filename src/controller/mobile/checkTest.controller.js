@@ -432,6 +432,18 @@ module.exports = {
         await SubjectTest.findById(testDoc?._id, {
           isPassed: true,
         });
+
+        if (testDoc?.testType == 2) {
+          await UserSubjectModel.findOneAndUpdate(
+            {
+              user: userId,
+              subject: testDoc?.subject,
+            },
+            {
+              isComplated: true,
+            }
+          );
+        }
       }
 
       await SubjectTest.findByIdAndUpdate(testDoc?._id, {
