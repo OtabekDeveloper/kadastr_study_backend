@@ -234,7 +234,7 @@ module.exports = {
       }
 
       if (testType == 1) {
-        const exists = await SubjectTest.exists({
+        const exists = await SubjectTest.findOne({
           user: userId,
           subject: subjectId,
           testType: 1,
