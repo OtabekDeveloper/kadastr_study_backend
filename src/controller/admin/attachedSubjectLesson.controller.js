@@ -36,6 +36,7 @@ module.exports = {
           },
         ],
         select: ["-result"],
+        sort: { lessonStep: 1 }
       };
       let docs;
       if (limit && page) {
@@ -56,7 +57,8 @@ module.exports = {
               select: ["firstName", "lastName", "middleName"],
             },
           ])
-          .select(["-result"]);
+          .select(["-result"])
+          .sort({lessonStep: 1});
       }
 
       return res.status(200).json(docs);
