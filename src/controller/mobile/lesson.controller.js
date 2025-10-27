@@ -21,7 +21,7 @@ module.exports = {
       const limit = parseInt(req.query?.limit);
       data["user"] = req.user?._id;
       const options = {
-        sort: { step: 1 },
+        sort: { lessonStep: 1, step: 1 },
         page: page,
         limit: limit,
         populate: [
@@ -53,7 +53,7 @@ module.exports = {
         }
       } else {
         docs = await LessonModel.find(data)
-          .sort({ step: 1 })
+          .sort({ lessonStep: 1, step: 1 })
           .populate([
             {
               path: "subject",
@@ -80,7 +80,7 @@ module.exports = {
           path: "subject",
         },
       ]).populate({
-        path:"lesson"
+        path: "lesson"
       });
       if (!result) {
         return res.status(404).json({ message: "Ma'lumot topilmadi" });

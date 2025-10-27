@@ -3,6 +3,7 @@ const SubjectModel = require("../../models/subject.model");
 const LessonModel = require("../../models/lesson.model");
 const UserModel = require("../../models/user.model");
 const UserSubject = require("../../models/userSubject.model");
+const TestSubjectModel = require("../../models/SubjectTest.model")
 const moment = require("moment");
 
 module.exports = {
@@ -157,14 +158,15 @@ module.exports = {
       await UserSubject.findByIdAndDelete(id);
 
       await AttachedModel.deleteMany({ user, subject });
+      await TestSubjectModel.deleteMany({ user, subject })
 
-      return res
-        .status(200)
-        .json({ message: "User and attached lessons deleted successfully" });
-    } catch (error) {
-      return res.status(400).json({ message: error.message });
-    }
-  },
+    return res
+      .status(200)
+      .json({ message: "User and attached lessons deleted successfully" });
+  } catch(error) {
+    return res.status(400).json({ message: error.message });
+  }
+},
 
   getAllAttachedLesson: async (req, res) => {
     try {
@@ -200,17 +202,17 @@ module.exports = {
     }
   },
 
-  getOneAttachedLesson: async (req, res) => {
-    try {
-      const doc = await AttachedModel.findById(req.params.id);
+    getOneAttachedLesson: async (req, res) => {
+      try {
+        const doc = await AttachedModel.findById(req.params.id);
 
-      if (!doc) {
-        return res.status(404).json({ message: "Ma'lumot topilmadi" });
+        if (!doc) {
+          return res.status(404).json({ message: "Ma'lumot topilmadi" });
+        }
+
+        return res.status(200).json(doc);
+      } catch (error) {
+        return res.status(400).json({ message: error.message });
       }
-
-      return res.status(200).json(doc);
-    } catch (error) {
-      return res.status(400).json({ message: error.message });
-    }
-  },
+    },
 };
