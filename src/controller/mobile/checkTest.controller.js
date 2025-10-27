@@ -6,7 +6,8 @@ const AttachedModel = require("../../models/attechedSubject.model");
 
 const mongoose = require("mongoose");
 const moment = require("moment");
-const lessonModel = require("../../models/lesson.model");
+const LessonModel = require("../../models/lesson.model");
+const UserModel = require("../../models/user.model");
 
 module.exports = {
   answerTestLessonSubject: async (req, res) => {
@@ -202,6 +203,33 @@ module.exports = {
       }
 
       const subjectId = new mongoose.Types.ObjectId(subject);
+      const lessonsData = await LessonModel.find({ subject });
+
+      const userData = await UserModel.findById(userId).populate({
+        path: "group",
+        select: ["startDate", "endDate"],
+        strictPopulate: false,
+      });
+
+
+      const subjectData = await UserSubjectModel.findOne({
+        user: userId,
+        subject: subjectId,
+      })
+
+      if (!subjectData) {
+        await UserSubjectModel.create({
+          subject,
+          user: userId,
+          date: moment().format("YYYY-MM-DD"),
+          startDate: userData?.group?.startDate,
+          endDate: userData?.group?.endDate,
+          complateCount: 0,
+          totalLesson: lessonsData?.length,
+          group: userData?.group?._id,
+        });
+      }
+
       if (testType == 2) {
         const lastLesson = await AttachedModel.findOne({
           user: userId,
@@ -418,7 +446,7 @@ module.exports = {
           }
         );
 
-        const lessons = await lessonModel.find({ subject: testDoc?.subject });
+        const lessons = await LessonModel.find({ subject: testDoc?.subject });
         for (let i = 0; i < lessons?.length; i++) {
           await AttachedModel.create({
             subject: testDoc?.subject,
@@ -543,7 +571,7 @@ module.exports = {
       } else {
         choice = false;
       }
-      const lessons = await lessonModel.find({ subject: testDoc?.subject });
+      const lessons = await LessonModel.find({ subject: testDoc?.subject });
       for (let i = 0; i < lessons?.length; i++) {
         await AttachedModel.create({
           subject: testDoc?.subject,

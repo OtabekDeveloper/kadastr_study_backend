@@ -1,10 +1,12 @@
 const SubjectModel = require("../../models/subject.model");
+const UserSubjectModel = require("../../models/userSubject.model")
 
 module.exports = {
   getAll: async function (req, res) {
     try {
       const { search, isPublic, active } = req.query;
       let data = {};
+      const userId = req.user?._id;
       const page = parseInt(req.query?.page);
       const limit = parseInt(req.query?.limit);
 
@@ -19,13 +21,11 @@ module.exports = {
           $regex: new RegExp(search, "i"),
         };
       }
-      // if (active !== undefined) {
-      //   data.active = active === "true";
-      // }
 
-      // if (isPublic !== undefined) {
-      //   data.isPublic = isPublic === "true";
-      // }
+      const userSubjects = await UserSubjectModel.find({ user: userId }).lean();
+
+      const userSubjectIds = userSubjects.map(pe => pe?.subject.toString());
+
 
       data.isPublic = true;
       data.active = true;
@@ -33,9 +33,15 @@ module.exports = {
       let docs;
 
       if (limit && page) {
-        docs = await SubjectModel.paginate(data, options);
+        docs = await SubjectModel.paginate({
+          _id: { $nin: userSubjectIds },
+          ...data
+        }, options);
       } else {
-        docs = await SubjectModel.find(data).sort({ title: 1, createdAt: 1 });
+        docs = await SubjectModel.find({
+          _id: { $nin: userSubjectIds },
+          ...data
+        }).sort({ title: 1, createdAt: 1 });
       }
 
       return res.status(200).json(docs);
