@@ -446,16 +446,19 @@ module.exports = {
           }
         );
 
-        const lessons = await LessonModel.find({ subject: testDoc?.subject });
-        for (let i = 0; i < lessons?.length; i++) {
-          await AttachedModel.create({
-            subject: testDoc?.subject,
-            lesson: lessons[i],
-            user: userId,
-            isPassed: false,
-            lessonStep: lessons[i]?.step,
-          });
+        if (testDoc?.testType == 1) {
+          const lessons = await LessonModel.find({ subject: testDoc?.subject });
+          for (let i = 0; i < lessons?.length; i++) {
+            await AttachedModel.create({
+              subject: testDoc?.subject,
+              lesson: lessons[i],
+              user: userId,
+              isPassed: false,
+              lessonStep: lessons[i]?.step,
+            });
+          }
         }
+
       } else {
         await SubjectTest.findById(testDoc?._id, {
           isPassed: true,
