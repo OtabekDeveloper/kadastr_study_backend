@@ -9,6 +9,7 @@ const mongoose = require("mongoose");
 const morgan = require("morgan");
 const cors = require("cors");
 const AppRoutes = require("./router");
+const generateCertificate = require("./utils/certificates");
 const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(cors());
@@ -52,6 +53,8 @@ app.use("/files", express.static(imageRes, expressStaticOptions));
 app.get("/*", (req, res) => {
   res.sendFile("index.html", { root });
 });
+
+generateCertificate("test", "testName", 60, "2025-10-27", 4555)
 
 app.listen(PORT, () => {
   console.log(`Server ishga tushdi: http://localhost:${PORT}`);
