@@ -16,6 +16,8 @@ const UserSubjectSchema = new mongoose.Schema(
     reytingSubject: { type: Number, default: 0 },
     group: { type: mongoose.Schema.Types.ObjectId, ref: "group" },
     status: { type: Number, default: 1 }, // 1-yangi fan, 2-test ishlagan fan
+    certificate: { type: String, default: null }, // 1-yangi fan, 2-test ishlagan fan
+    certificate_code:{ type: Number, default: null },
   },
   { timestamps: true, versionKey: false }
 );

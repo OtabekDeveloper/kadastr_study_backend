@@ -26,7 +26,7 @@ module.exports = {
           populate: [
             {
               path: "subject",
-              select: "title desc photo active isPublic",
+              select: "title desc photo active isPublic certificate certificate_code",
             }
           ],
           select:["-user", "-createdAt", "-updatedAt"]
@@ -40,7 +40,7 @@ module.exports = {
           .sort({ createdAt: -1 })
           .populate({
             path: "subject",
-            select: "title desc photo active isPublic",
+            select: "title desc photo active isPublic certificate certificate_code",
           })
           .select(["-user", "-createdAt", "-updatedAt"])
 
@@ -66,7 +66,7 @@ module.exports = {
       })
         .populate({
           path: "subject",
-          select: "title desc photo active isPublic",
+          select: "title desc photo active isPublic certificate certificate_code",
         })
         .select(["-user", "-createdAt", "-updatedAt"])
 

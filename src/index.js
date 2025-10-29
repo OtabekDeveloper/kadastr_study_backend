@@ -54,7 +54,6 @@ app.get("/*", (req, res) => {
   res.sendFile("index.html", { root });
 });
 
-generateCertificate("test", "testName", 60, "2025-10-27", 4555)
 
 app.listen(PORT, () => {
   console.log(`Server ishga tushdi: http://localhost:${PORT}`);

@@ -8,6 +8,9 @@ const mongoose = require("mongoose");
 const moment = require("moment");
 const LessonModel = require("../../models/lesson.model");
 const UserModel = require("../../models/user.model");
+const generateCertificate = require("../../utils/certificates");
+const SubjectModel = require("../../models/subject.model");
+const crypto = require("crypto");
 
 module.exports = {
   answerTestLessonSubject: async (req, res) => {
@@ -465,6 +468,25 @@ module.exports = {
         });
 
         if (testDoc?.testType == 2) {
+          const userData = await UserModel.findById(userId)
+          const subjectData = await SubjectModel.findById(testDoc?.subject)
+
+
+          let isExsistCode = true
+          let code = null;
+
+          while (isExsistCode) {
+            let newCode = crypto.randomInt(1000000, 10000000); // 7 xonali
+            const userSubjectCode = await UserSubjectModel.findOne({ certificate_code: newCode })
+
+            if (!userSubjectCode) {
+              code = newCode,
+                isExsistCode = false
+            }
+          }
+
+          const certificatePath = await generateCertificate(userData?.firstName, userData?.lastName, subjectData?.title, percent, code)
+          
           await UserSubjectModel.findOneAndUpdate(
             {
               user: userId,
@@ -472,6 +494,8 @@ module.exports = {
             },
             {
               isComplated: true,
+              certificate: certificatePath,
+              certificate_code: code
             }
           );
         }
@@ -606,3 +630,40 @@ module.exports = {
     }
   },
 };
+
+async function generateCertificateCode(userId, testDoc) {
+  let codeLength = 7;
+  let saved = false;
+  let code;
+
+  while (!saved) {
+    let tries = 0; // Har uzunlik uchun urinishlar soni
+
+    while (!saved && tries < 200) {
+      const min = 10 ** (codeLength - 1);
+      const max = 10 ** codeLength;
+
+      const newCode = crypto.randomInt(min, max);
+
+      try {
+        const userSubject = new UserSubjectModel({
+          user: userId,
+          subject: testDoc?.subject,
+          certificate_code: newCode,
+        });
+
+        await userSubject.save();
+        code = newCode;
+        saved = true;
+      } catch (err) {
+        if (err.code !== 11000) throw err;
+        tries++;
+      }
+    }
+
+    if (!saved) {
+      codeLength++;
+    }
+  }
+  return code;
+}
