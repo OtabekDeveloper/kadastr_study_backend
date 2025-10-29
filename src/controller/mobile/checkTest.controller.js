@@ -486,7 +486,7 @@ module.exports = {
           }
 
           const certificatePath = await generateCertificate(userData?.firstName, userData?.lastName, subjectData?.title, percent, code)
-          
+
           await UserSubjectModel.findOneAndUpdate(
             {
               user: userId,
@@ -517,6 +517,12 @@ module.exports = {
           }
         );
       }
+
+      const certificData = await UserSubjectModel.findOne(
+        {
+          user: userId,
+          subject: testDoc?.subject,
+        })
       return res.status(200).json({
         testId: testDoc?._id,
         total,
@@ -524,6 +530,7 @@ module.exports = {
         inCorrectCount,
         percent,
         isPassed: testDoc.isPassed,
+        certificate: certificData?.certificate
       });
     } catch (error) {
       return res.status(400).json({ message: error.message });
@@ -610,6 +617,27 @@ module.exports = {
       }
 
       if (isCompletion == true) {
+        const userData = await UserModel.findById(userId)
+        const subjectData = await SubjectModel.findById(testDoc?.subject)
+
+
+        let isExsistCode = true
+        let code = null;
+
+        const total = testDoc?.questions?.length;
+        const percent = Math.round((testDoc?.correctCount / total) * 100);
+
+        while (isExsistCode) {
+          let newCode = crypto.randomInt(1000000, 10000000); // 7 xonali
+          const userSubjectCode = await UserSubjectModel.findOne({ certificate_code: newCode })
+
+          if (!userSubjectCode) {
+            code = newCode,
+              isExsistCode = false
+          }
+        }
+
+        const certificatePath = await generateCertificate(userData?.firstName, userData?.lastName, subjectData?.title, percent, code)
         await UserSubjectModel.findOneAndUpdate(
           {
             user: userId,
@@ -618,8 +646,14 @@ module.exports = {
           {
             isComplated: true,
             complateCount: lessons.length,
+            certificate: certificatePath,
+            certificate_code: code
           }
         );
+        return res.status(200).json({
+          message: "success",
+          certificate: certificatePath,
+        });
       }
 
       return res.status(200).json({
