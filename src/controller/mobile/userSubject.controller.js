@@ -29,7 +29,7 @@ module.exports = {
               select: "title desc photo active isPublic certificate certificate_code",
             }
           ],
-          select:["-user", "-createdAt", "-updatedAt"]
+          select: ["-user", "-createdAt", "-updatedAt"]
         };
 
         const data = await UserSubject.paginate(filter, options);
@@ -127,6 +127,76 @@ module.exports = {
       });
 
       return res.status(201).json({ message: "success" });
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
+    }
+  },
+
+  myCertificates: async (req, res) => {
+    try {
+      const { page, limit } = req.query;
+      const userId = req.user?._id;
+
+      if (!userId) {
+        return res.status(400).json({ message: "User ID not found" });
+      }
+
+      const filter = { user: userId, certificate: { $ne: null } };
+
+      if (page && limit) {
+        const options = {
+          page: parseInt(page),
+          limit: parseInt(limit),
+          sort: { createdAt: -1 },
+          populate: [
+            {
+              path: "subject",
+              select: "title desc photo certificate certificate_code",
+            }
+          ],
+          select: ["-user", "-createdAt", "-updatedAt"]
+        };
+
+        const data = await UserSubject.paginate(filter, options);
+
+        return res.status(200).json(data);
+      } else {
+        const data = await UserSubject.find(filter)
+          .sort({ createdAt: -1 })
+          .populate({
+            path: "subject",
+            select: "title desc photo certificate certificate_code",
+          })
+          .select(["-user", "-createdAt", "-updatedAt"])
+
+        return res.status(200).json(data);
+      }
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
+    }
+  },
+
+  myCertificate: async (req, res) => {
+    try {
+      const userId = req.user?._id;
+      const { id } = req.params;
+
+      if (!userId) {
+        return res.status(400).json({ message: "User ID not found" });
+      }
+
+      const data = await UserSubject.findById(id)
+        .populate({
+          path: "subject",
+          select: "title desc photo active isPublic certificate certificate_code",
+        })
+        .select(["-user", "-createdAt", "-updatedAt"])
+
+      if (!data) {
+        return res.status(404).json({ message: "certificate not found" });
+      }
+
+      return res.status(200).json(data);
     } catch (error) {
       return res.status(400).json({ message: error.message });
     }
