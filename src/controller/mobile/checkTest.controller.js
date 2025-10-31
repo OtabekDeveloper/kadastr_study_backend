@@ -471,19 +471,28 @@ module.exports = {
           const userData = await UserModel.findById(userId)
           const subjectData = await SubjectModel.findById(testDoc?.subject)
 
+          // Random olish (eski)
+          // let isExsistCode = true
+          // let code = null;
 
-          let isExsistCode = true
-          let code = null;
+          // while (isExsistCode) {
+          //   let newCode = crypto.randomInt(1000000, 10000000); // 7 xonali
+          //   const userSubjectCode = await UserSubjectModel.findOne({ certificate_code: newCode })
 
-          while (isExsistCode) {
-            let newCode = crypto.randomInt(1000000, 10000000); // 7 xonali
-            const userSubjectCode = await UserSubjectModel.findOne({ certificate_code: newCode })
+          //   if (!userSubjectCode) {
+          //     code = newCode,
+          //       isExsistCode = false
+          //   }
+          // }
 
-            if (!userSubjectCode) {
-              code = newCode,
-                isExsistCode = false
-            }
+
+          // tartib bilan olish
+          let code = 1000000
+          const userSubjectCode = await UserSubjectModel.findOne().sort({ certificate_code: -1 })
+          if (userSubjectCode?.certificate_code) {
+            code = userSubjectCode?.certificate_code + 1
           }
+
 
           const certificatePath = await generateCertificate(userData?.firstName, userData?.lastName, subjectData?.title, percent, code)
 
@@ -621,21 +630,29 @@ module.exports = {
         const subjectData = await SubjectModel.findById(testDoc?.subject)
 
 
-        let isExsistCode = true
-        let code = null;
 
         const total = testDoc?.questions?.length;
         const percent = Math.round((testDoc?.correctCount / total) * 100);
 
-        while (isExsistCode) {
-          let newCode = crypto.randomInt(1000000, 10000000); // 7 xonali
-          const userSubjectCode = await UserSubjectModel.findOne({ certificate_code: newCode })
+        // let isExsistCode = true
+        // let code = null;
+        // while (isExsistCode) {
+        //   let newCode = crypto.randomInt(1000000, 10000000); // 7 xonali
+        //   const userSubjectCode = await UserSubjectModel.findOne({ certificate_code: newCode })
 
-          if (!userSubjectCode) {
-            code = newCode,
-              isExsistCode = false
-          }
+        //   if (!userSubjectCode) {
+        //     code = newCode,
+        //       isExsistCode = false
+        //   }
+        // }
+
+        // tartib bilan olish
+        let code = 1000000
+        const userSubjectCode = await UserSubjectModel.findOne().sort({ certificate_code: -1 })
+        if (userSubjectCode?.certificate_code) {
+          code = userSubjectCode?.certificate_code + 1
         }
+
 
         const certificatePath = await generateCertificate(userData?.firstName, userData?.lastName, subjectData?.title, percent, code)
         await UserSubjectModel.findOneAndUpdate(
@@ -665,39 +682,3 @@ module.exports = {
   },
 };
 
-async function generateCertificateCode(userId, testDoc) {
-  let codeLength = 7;
-  let saved = false;
-  let code;
-
-  while (!saved) {
-    let tries = 0; // Har uzunlik uchun urinishlar soni
-
-    while (!saved && tries < 200) {
-      const min = 10 ** (codeLength - 1);
-      const max = 10 ** codeLength;
-
-      const newCode = crypto.randomInt(min, max);
-
-      try {
-        const userSubject = new UserSubjectModel({
-          user: userId,
-          subject: testDoc?.subject,
-          certificate_code: newCode,
-        });
-
-        await userSubject.save();
-        code = newCode;
-        saved = true;
-      } catch (err) {
-        if (err.code !== 11000) throw err;
-        tries++;
-      }
-    }
-
-    if (!saved) {
-      codeLength++;
-    }
-  }
-  return code;
-}
