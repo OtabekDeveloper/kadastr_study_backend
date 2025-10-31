@@ -13,6 +13,7 @@ const TestRouter = require("./test.router");
 const AttechedRouter = require("./attechedSubject.router");
 const AttachedLessonRouter = require("./attachedSubjectLesson.router");
 const ReportRouter = require("./report.router")
+const YoutubeRouter = require("./youtube.router")
 
 router.use("/attachedlesson", AttachedLessonRouter);
 router.use("/province", ProvinceRouter);
@@ -28,5 +29,6 @@ router.use("/lesson", LessonRouter);
 router.use("/test", TestRouter);
 router.use("/atteched-subject", AttechedRouter);
 router.use("/report/group-reting", ReportRouter)
+router.use("/youtube", YoutubeRouter)
 
 module.exports = router;
