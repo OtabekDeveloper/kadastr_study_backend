@@ -9,7 +9,7 @@ module.exports = {
       const limit = parseInt(req.query?.limit);
 
       const options = {
-        sort: { createdAt: 1 },
+        sort: { createdAt: -1 },
         page: page,
         limit: limit,
         select: ["title", "link", "date"]
@@ -27,7 +27,7 @@ module.exports = {
       if (limit && page) {
         docs = await YoutubeModel.paginate(data, options);
       } else {
-        docs = await YoutubeModel.find(data).sort({ createdAt: 1 }).select(["title", "link", "date"]);
+        docs = await YoutubeModel.find(data).sort({ createdAt: -1 }).select(["title", "link", "date"]);
       }
 
       return res.status(200).json(docs);
