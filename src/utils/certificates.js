@@ -57,17 +57,22 @@ async function generateCertificate(firstName, lastName, subject, score, certific
       boshqarmalari hamda Tizim tashkilotlarda faoliyat yuritayotgan xodimlari malakasini 
       oshirish o'quv kursida (${subject}) malaka oshirdi 
       Yakuniy imtihon natijasiga ko'ra ${score} ball bilan baholandi.`, { align: "center", lineGap: 8 });
-    doc.moveDown(4);
 
+
+    // QR code yaratish
+    const qrData = `${cer_url}/certificates/${uniqueName}.pdf`;
+    const qrCodeImage = await QRCode.toDataURL(qrData, {
+        margin: 0,
+      });
+
+    const qrImageBuffer = Buffer.from(qrCodeImage.split(",")[1], "base64");
+    doc.image(qrImageBuffer, 45, doc.page.height - 150, { width: 100 });    
+
+    doc.moveDown(4);
     doc.fontSize(15).text(`Direktor:              A. S. Avazov`, { align: "right" });
     doc.moveDown(0.5);
     doc.fontSize(11).text(` Sana: ${formatted}       Qayd raqami ${certificate_code}`, { align: "right" });
-    // QR code yaratish
-    const qrData = `${cer_url}/certificates/${uniqueName}.pdf`;
-    const qrCodeImage = await QRCode.toDataURL(qrData);
 
-    const qrImageBuffer = Buffer.from(qrCodeImage.split(",")[1], "base64");
-    doc.image(qrImageBuffer, 14, doc.page.height - 220, { width: 150 });
 
 
     doc.end();
