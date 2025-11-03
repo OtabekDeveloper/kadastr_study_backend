@@ -1,4 +1,5 @@
 const UserModel = require("../../models/user.model");
+const UserSubjectModel = require("../../models/userSubject.model")
 const { deleteFile } = require("../../utils/deleteFile");
 
 module.exports = {
@@ -179,6 +180,134 @@ module.exports = {
       return res
         .status(200)
         .json({ message: "Fayl muvaffaqiyatli o'chirildi" });
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
+    }
+  },
+
+  getAllCertificates: async function (req, res) {
+    try {
+      const { userId } = req.query;
+      let data = {};
+      const page = parseInt(req.query?.page);
+      const limit = parseInt(req.query?.limit);
+
+      if (!userId) {
+        return res.status(400).json({ message: "userId is required" })
+      }
+
+      const options = {
+        sort: { title: 1, createdAt: 1 },
+        page: page,
+        limit: limit,
+        populate: [
+          {
+            path: "subject",
+            select: ["title"],
+          },
+          {
+            path: "user",
+            select: ["firstName", "lastName", "middleName"],
+          },
+          {
+            path: "group",
+            select: ["title"],
+          },
+        ],
+        select: [
+          "subject",
+          "user",
+          "date",
+          "startDate",
+          "endDate",
+          "complateCount",
+          "reytingLesson",
+          "reytingSubject",
+          "certificate",
+          "certificate_code",
+        ]
+      };
+
+      let docs;
+      data = { user: userId, certificate: { $ne: null } };
+
+      if (limit && page) {
+        docs = await UserSubjectModel.paginate(data, options);
+      } else {
+        docs = await UserSubjectModel.find(data)
+          .sort({ title: 1, createdAt: 1 })
+          .populate([
+            {
+              path: "subject",
+              select: ["title"],
+            },
+            {
+              path: "user",
+              select: ["firstName", "lastName", "middleName"],
+            },
+            {
+              path: "group",
+              select: ["title"],
+            },
+          ])
+          .select([
+            "subject",
+            "user",
+            "date",
+            "startDate",
+            "endDate",
+            "complateCount",
+            "reytingLesson",
+            "reytingSubject",
+            "certificate",
+            "certificate_code",
+          ]);
+      }
+
+      return res.status(200).json(docs);
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
+    }
+  },
+
+  oneCertificate: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const data = await UserSubjectModel.findById(id)
+        .sort({ title: 1, createdAt: 1 })
+        .populate([
+          {
+            path: "subject",
+            select: ["title"],
+          },
+          {
+            path: "user",
+            select: ["firstName", "lastName", "middleName"],
+          },
+          {
+            path: "group",
+            select: ["title"],
+          },
+        ])
+        .select([
+          "subject",
+          "user",
+          "date",
+          "startDate",
+          "endDate",
+          "complateCount",
+          "reytingLesson",
+          "reytingSubject",
+          "certificate",
+          "certificate_code",
+        ]);
+
+      if (!data) {
+        return res.status(404).json({ message: "certificate not found" });
+      }
+
+      return res.status(200).json(data);
     } catch (error) {
       return res.status(400).json({ message: error.message });
     }
