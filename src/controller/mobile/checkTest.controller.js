@@ -604,9 +604,9 @@ module.exports = {
         user: userId,
         subject: testDoc?.subject,
       });
-      if (result?.isComplated) {
-        return res.status(400).json({ message: "Subject allready complated" });
-      }
+      // if (result?.isComplated) {
+      //   return res.status(400).json({ message: "Subject allready complated" });
+      // }
 
       let choice = null;
       if (isCompletion) {

@@ -24,6 +24,7 @@ async function generateCertificate(firstName, lastName, subject, score, certific
     const uniqueName = `file_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 
     const doc = new PDFDocument({ size: "A4", layout: "landscape" });
+    doc.page.margins = { top: 20, bottom: 0, left: 20, right: 20 };
     const filePath = `${process.cwd()}/uploads/certificates/${uniqueName}.pdf`;
 
     if (!fs.existsSync(`${process.cwd()}/uploads/certificates`)) {
@@ -41,38 +42,39 @@ async function generateCertificate(firstName, lastName, subject, score, certific
         doc.image(bgPath, 0, 0, { width: doc.page.width, height: doc.page.height });
     }
 
-    doc.font(`${process.cwd()}/fonts/Tinos-Bold.ttf`).moveDown(5);
-    doc.fontSize(18).text("O‘zbekiston Respublikasi Iqtisodiyot va moliya vazirligi huzuridagi \n Kadastr agentligi", { align: "center" });
+    doc.font(`${process.cwd()}/fonts/Tinos-Bold.ttf`).moveDown(4);
+    doc.fontSize(18).text("O‘zbekiston Respublikasi Iqtisodiyot va moliya vazirligi \nhuzuridagi Kadastr agentligining \n Davlat kadastrlari palatasi", { align: "center", lineGap: 8 });
 
-    doc.fontSize(36).fillColor("#FF0000").text("SERTIFIKAT", { align: "center" });
+    doc.fontSize(36).fillColor("#FF0000").text("SERTIFIKAT", { align: "center", lineGap: 8 });
     // Keyingi matnlar qora rangda bo‘lishi uchun
     doc.fillColor("#000000");
 
-    doc.fontSize(16).text(`${String.fromCharCode(8470)} ${certificate_code}`, { align: "center" });
+    doc.fontSize(16).text(`${String.fromCharCode(8470)} ${certificate_code}`, { align: "center", underline: true, lineGap: 8 });
 
-    doc.fontSize(20).text(`${firstName.toString().toUpperCase()} ${lastName.toString().toUpperCase()}`, { align: "center" });
-    doc.moveDown(1);
-    doc.fontSize(15).text(` 2024-yil 31-maydan 2024-yil 6-iyungacha Kadastr agentligida jami 36 soatli
-     Hisobchilar malakasini oshirish bo'yicha Kadastr agentligining hududiy
-      boshqarmalari hamda Tizim tashkilotlarda faoliyat yuritayotgan xodimlari malakasini 
-      oshirish o'quv kursida (${subject}) malaka oshirdi 
-      Yakuniy imtihon natijasiga ko'ra ${score} ball bilan baholandi.`, { align: "center", lineGap: 8 });
+    doc.fontSize(20).text(`${firstName.toString().toUpperCase()} ${lastName.toString().toUpperCase()}`, { align: "center", lineGap: 8 });
 
-
+    doc.fontSize(18).text(`Davlat kadastrlari palatasining  masofaviy  jami 36 soatli
+    ${subject} malakasini oshirish kursida \ntizimda faoliyat yuritayotgan xodimlar malaka oshirdi.`, { align: "center", lineGap: 8 });
+    doc.fontSize(18).text(`\nYakuniy imtihon natijasiga ko‘ra ${score} ball bilan baholandi.`, { align: "center", });
     // QR code yaratish
     const qrData = `${cer_url}/certificates/${uniqueName}.pdf`;
     const qrCodeImage = await QRCode.toDataURL(qrData, {
         margin: 0,
-      });
+    });
 
     const qrImageBuffer = Buffer.from(qrCodeImage.split(",")[1], "base64");
-    doc.image(qrImageBuffer, 45, doc.page.height - 150, { width: 100 });    
+    doc.image(qrImageBuffer, 610, doc.page.height - 110, { width: 60 });
 
-    doc.moveDown(4);
-    doc.fontSize(15).text(`Direktor:              A. S. Avazov`, { align: "right" });
-    doc.moveDown(0.5);
-    doc.fontSize(11).text(` Sana: ${formatted}       Qayd raqami ${certificate_code}`, { align: "right" });
+    doc.moveDown(3.5);
+    doc.text(`Rais:`, 540, doc.page.height - 90);
+    doc.text(`M.Valiyev`, 690, doc.page.height - 90);
+    doc.fontSize(12);
+    doc.font(`${process.cwd()}/fonts/Tinos-BoldItalic.ttf`)
+    doc.text(`Sana:`, 450, doc.page.height - 40);
+    doc.text(formatted, 480, doc.page.height - 40, { underline: true });
 
+    doc.text(`Qayd raqami:`, 690, doc.page.height - 40);
+    doc.text(certificate_code, 760, doc.page.height - 40, { underline: true });
 
 
     doc.end();
