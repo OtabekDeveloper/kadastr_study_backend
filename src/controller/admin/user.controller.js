@@ -123,12 +123,14 @@ module.exports = {
         device: null,
       });
       if(!doc){
+        console.log(doc)
         return res.status(400).json({
           message: "User not clear"
         })
       }
       return res.status(200).json({message: "success"})
     } catch (error) {
+      console.log(error)
       return res.status(400).json({ message: error.message });
     }
   },
