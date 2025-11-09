@@ -119,7 +119,7 @@ module.exports = {
 
   clearUser: async function (req, res) {
     try {
-      let doc = await UserModel.findByIdAndUpdate(user, {
+      let doc = await UserModel.findByIdAndUpdate(req.body?.user, {
         device: null,
       });
       if(!doc){
