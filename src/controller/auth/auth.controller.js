@@ -36,7 +36,7 @@ module.exports = {
 
   mobileLogin: async (req, res, next) => {
     try {
-      const { phone, password } = req.body;
+      const { phone, password, device } = req.body;
 
       let user = await UserModel.findOne({
         phone: phone,
@@ -47,21 +47,29 @@ module.exports = {
           .json({ message: "Telefon raqam yoki parol noto'g'ri" });
       }
       if (user.password == password) {
-        const token = jwt.sign(
-          {
-            _id: user?._id,
-            firstName: user?.firstName,
-            lastName: user?.lastName,
-            middleName: user?.middleName,
-          },
-          process.env.JWT_SECRET_KEY,
-          {
-            algorithm: "HS256",
-            expiresIn: process.env.JWT_MOBILE_EXPIRESIN,
-          }
-        );
-
-        return res.status(200).json({ token });
+        if (user?.device?.macadress != device?.macadress && user?.device) {
+          return res.status(411).json({
+            message: "Qurilmalar soni cheklangan!",
+          });
+        } else {
+          const token = jwt.sign(
+            {
+              _id: user?._id,
+              firstName: user?.firstName,
+              lastName: user?.lastName,
+              middleName: user?.middleName,
+            },
+            process.env.JWT_SECRET_KEY,
+            {
+              algorithm: "HS256",
+              expiresIn: process.env.JWT_MOBILE_EXPIRESIN,
+            }
+          );
+          await UserModel.findByIdAndUpdate(user?._id, {
+            device: device,
+          });
+          return res.status(200).json({ token });
+        }
       } else {
         return res
           .status(404)

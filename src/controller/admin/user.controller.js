@@ -1,5 +1,5 @@
 const UserModel = require("../../models/user.model");
-const UserSubjectModel = require("../../models/userSubject.model")
+const UserSubjectModel = require("../../models/userSubject.model");
 const { deleteFile } = require("../../utils/deleteFile");
 
 module.exports = {
@@ -117,6 +117,24 @@ module.exports = {
     }
   },
 
+  clearUser: async function (req, res) {
+    try {
+      let doc = await UserModel.findByIdAndUpdate(req.body?.user, {
+        device: null,
+      });
+      if(!doc){
+        console.log(doc)
+        return res.status(400).json({
+          message: "User not clear"
+        })
+      }
+      return res.status(200).json({message: "success"})
+    } catch (error) {
+      console.log(error)
+      return res.status(400).json({ message: error.message });
+    }
+  },
+
   updateOne: async function (req, res) {
     try {
       const doc = await UserModel.findById(req.params.id);
@@ -193,7 +211,7 @@ module.exports = {
       const limit = parseInt(req.query?.limit);
 
       if (!userId) {
-        return res.status(400).json({ message: "userId is required" })
+        return res.status(400).json({ message: "userId is required" });
       }
 
       const options = {
@@ -225,7 +243,7 @@ module.exports = {
           "reytingSubject",
           "certificate",
           "certificate_code",
-        ]
+        ],
       };
 
       let docs;
