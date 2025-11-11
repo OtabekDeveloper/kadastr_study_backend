@@ -53,8 +53,9 @@ async function generateCertificate(firstName, lastName, subject, score, certific
 
     doc.fontSize(20).text(`${firstName.toString().toUpperCase()} ${lastName.toString().toUpperCase()}`, { align: "center", lineGap: 8 });
 
-    doc.fontSize(18).text(`Davlat kadastrlari palatasining  masofaviy  jami 36 soatli
-    ${subject} malakasini oshirish kursida \ntizimda faoliyat yuritayotgan xodimlar malaka oshirdi.`, { align: "center", lineGap: 8 });
+    doc.fontSize(18).text(`
+    Davlat kadastrlari palatasining tizimida faoliyat yuritayotgan xodim.
+    Masofaviy 36 soatli ${subject} kursida malakasini oshirdi.`, { align: "center", lineGap: 8 });
     doc.fontSize(18).text(`\nYakuniy imtihon natijasiga ko‘ra ${score} ball bilan baholandi.`, { align: "center", });
     // QR code yaratish
     const qrData = `${cer_url}/certificates/${uniqueName}.pdf`;
