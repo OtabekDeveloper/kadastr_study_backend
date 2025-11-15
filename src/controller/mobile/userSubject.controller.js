@@ -26,7 +26,7 @@ module.exports = {
           populate: [
             {
               path: "subject",
-              select: "title desc photo active isPublic certificate certificate_code telegramLink",
+              select: "title desc photo active isPublic certificate certificate_code telegeramLink",
             }
           ],
           select: ["-user", "-createdAt", "-updatedAt"]
@@ -40,7 +40,7 @@ module.exports = {
           .sort({ createdAt: -1 })
           .populate({
             path: "subject",
-            select: "title desc photo active isPublic certificate certificate_code telegramLink",
+            select: "title desc photo active isPublic certificate certificate_code telegeramLink",
           })
           .select(["-user", "-createdAt", "-updatedAt"])
 
@@ -66,7 +66,7 @@ module.exports = {
       })
         .populate({
           path: "subject",
-          select: "title desc photo active isPublic certificate certificate_code telegramLink",
+          select: "title desc photo active isPublic certificate certificate_code telegeramLink",
         })
         .select(["-user", "-createdAt", "-updatedAt"])
 
@@ -188,7 +188,7 @@ module.exports = {
       const data = await UserSubject.findById(id)
         .populate({
           path: "subject",
-          select: "title desc photo active isPublic certificate certificate_code telegramLink",
+          select: "title desc photo active isPublic certificate certificate_code telegeramLink",
         })
         .select(["-user", "-createdAt", "-updatedAt"])
 
