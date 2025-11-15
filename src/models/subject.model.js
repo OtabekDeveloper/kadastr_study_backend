@@ -9,7 +9,11 @@ const SubjectSchema = new mongoose.Schema(
     photo: { type: String },
     active: { type: Boolean, default: true },
     isPublic: { type: Boolean, default: false },
-    lessonCount: { type: Number, default: 0 }
+    lessonCount: { type: Number, default: 0 },
+    telegeramLink: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true, versionKey: false }
 );
